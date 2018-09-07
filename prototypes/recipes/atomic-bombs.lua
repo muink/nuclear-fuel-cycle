@@ -34,7 +34,7 @@ data:extend({
 		ingredients = {
 			{"processing-unit", 20},
 			{"explosives", 10},
-			{"90%-plutonium-239", 13}
+			{"90%-plutonium-239", 20}
 		},
 		result = "atomic-bomb"
 	}
