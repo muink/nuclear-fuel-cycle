@@ -1,4 +1,8 @@
 local energy = data.raw.recipe["uranium-fuel-cell"].energy_required
+local u_breeding_ratio = U_BREEDING_RATIO
+local pu_breeding_ratio = PU_BREEDING_RATIO
+local pu_amount = PER_CELL_PU_AMOUNT
+
 
 data:extend({
 	{
@@ -63,15 +67,15 @@ data:extend({
 			}
 		},
 		icon_size = 32,
-		energy_required = 12,
+		energy_required = u_breeding_ratio*pu_amount,
 		enabled = false,
 		ingredients = {
-			{"iron-plate", 4},
+			{"iron-plate", u_breeding_ratio},
 			{"uranium-235", 1},
-			{"uranium-238", 16}
+			{"uranium-238", u_breeding_ratio*pu_amount}
 		},
 		result = "breeder-fuel-cell",
-		result_count = 4
+		result_count = u_breeding_ratio
 	},
 	{
 		type = "recipe",
@@ -87,14 +91,14 @@ data:extend({
 			}
 		},
 		icon_size = 32,
-		energy_required = 24,
+		energy_required = pu_breeding_ratio*pu_amount,
 		enabled = false,
 		ingredients = {
-			{"iron-plate", 6},
+			{"iron-plate", pu_breeding_ratio},
 			{"90%-plutonium-239", 1},
-			{"uranium-238", 24}
+			{"uranium-238", pu_breeding_ratio*pu_amount}
 		},
 		result = "breeder-fuel-cell",
-		result_count = 6
+		result_count = pu_breeding_ratio
 	}
 })

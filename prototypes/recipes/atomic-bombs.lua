@@ -1,3 +1,7 @@
+local energy = data.raw.recipe["atomic-bomb"].energy_required
+local atomic_bomb_ingredient = PU_BOMB_INGREDIENT
+
+
 --Tweaks icon for vanilla recipe of atomic bomb
 data.raw.recipe["atomic-bomb"].icons = {
 	{
@@ -11,8 +15,6 @@ data.raw.recipe["atomic-bomb"].icons = {
 }
 data.raw.recipe["atomic-bomb"].icon_size = 32
 
-
-local energy = data.raw.recipe["atomic-bomb"].energy_required
 
 data:extend({
 	{
@@ -34,7 +36,7 @@ data:extend({
 		ingredients = {
 			{"processing-unit", 20},
 			{"explosives", 10},
-			{"90%-plutonium-239", 20}
+			{"90%-plutonium-239", atomic_bomb_ingredient}
 		},
 		result = "atomic-bomb"
 	}

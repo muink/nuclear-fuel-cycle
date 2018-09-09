@@ -2,6 +2,8 @@
 require("lualib.functions")
 
 
+require("config")
+
 require("prototypes.items.item-groups")
 require("prototypes.items.items")
 
