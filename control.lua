@@ -50,6 +50,29 @@ local function reactor_runing_status(reactor)
 	return reactor.burner.remaining_burning_fuel > 0 and reactor.burner.currently_burning.fuel_value - reactor.burner.remaining_burning_fuel, reactor.burner.remaining_burning_fuel > 0 and reactor.burner.currently_burning.fuel_value
 end
 
+local function table_length(tab)
+	if tab == nil then
+		return 0
+	else
+		local count = 0
+		for _ in pairs(tab) do count = count + 1 end
+		return count	
+	end
+end
+
+local function table_status_refresh()
+	--refresh reactor count
+	local reactors = global.reactors
+	global.count = table_length(reactors)
+
+	--refresh update parameter
+	local reactor_count = global.count
+	global.update_interval = math_ceil(FULL_UPDATE_INTERVAL/reactor_count)
+	local a = math_floor(reactor_count/FULL_UPDATE_INTERVAL + 0.5)
+	if a == 0 then a=1 end
+	global.update_intensity = a
+end
+
 
 
 --[[Main Events function Block]]--
@@ -84,6 +107,7 @@ local function died(event)
 			end
 		end
 		global.reactors[id] = nil
+		table_status_refresh()
 	end
 end
 
@@ -103,6 +127,7 @@ local function mined(event)
 		local id = entity.unit_number
 		--if entity.die() then debug_log "kill the entity before destroyed." end --result items will be collect, corpse will generate
 		global.reactors[id] = nil
+		table_status_refresh()
 	end
 end
 
@@ -130,6 +155,7 @@ local function built(event)
 		debug_log("Add reactor to table")
 		local id = entity.unit_number
 		global.reactors[id] = {reactor = entity, last_burned = false}
+		table_status_refresh()
 	end
 end
 
@@ -143,12 +169,13 @@ local function surface_del(event)
 	end
 	debug_log("The surface #" .. index .. ": \"" .. surface.name .. "\" is deleted")
 	debug_log("Remove " ..  #reactors .. " reactors of this surface from table")
+	table_status_refresh()
 end
 
 local function setup_global()
 	game.print({"message.exacting-mode-enabled"}, {r=1,g=1,b=0,a=1})
 	--setup the global reactors table to store reactor entity data
-	global = {reactors = {}, index = nil}
+	global = {reactors = {}, index = nil, count = 0, update_interval = 40, update_intensity = 1}
 
 	--traverse all surface on map to find all nuclear reactors
 	--[[
@@ -167,24 +194,32 @@ local function setup_global()
 			built({created_entity = reactor})
 		end
 	end
+	table_status_refresh()
 end
 
 local function on_tick(event)
 	local tick = event.tick
 	local reactors = global.reactors
+	--table status
+	table_status_refresh()
+	local reactor_count = global.count
+	local update_interval = global.update_interval
+	local update_intensity = global.update_intensity
 
-	if tick % FULL_UPDATE_INTERVAL == 0 then
+	if reactor_count > 0 and tick % update_interval == 0 then
+		--debug_log("update_interval: " .. update_interval)
 
 		local next = _G.next --https://springrts.com/wiki/Lua_Performance
 		local index, data = global.index, nil
 
-		do
+		--debug_log("update_intensity: " .. update_intensity)
+		repeat
 			::redo::
 			if index and reactors[index] then
 				data = reactors[index]
 			else
 				index, data = next(reactors, index)
-				if not data then goto continue end
+				if not data then break end
 			end
 			local reactor = data.reactor
 
@@ -207,8 +242,8 @@ local function on_tick(event)
 				goto redo
 			end
 			index = next(reactors, index)
-			::continue::
-		end
+			update_intensity = update_intensity - 1
+		until(update_intensity <= 0)
 
 		global.index = index
 	end
