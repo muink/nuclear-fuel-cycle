@@ -1,10 +1,8 @@
 
-if not nuclear_fuel_cycle then nuclear_fuel_cycle = {} end
-if not nuclear_fuel_cycle.lib then nuclear_fuel_cycle.lib = {} end
+require("lualib.functions")
 
 
-require("libs.functions")
-
+require("config")
 
 require("prototypes.items.item-groups")
 require("prototypes.items.items")

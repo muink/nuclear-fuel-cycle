@@ -1,3 +1,6 @@
+local energy = data.raw.recipe["nuclear-fuel"].energy_required
+
+
 --Tweaks icon for vanilla recipe of nuclear fuel
 data.raw.recipe["nuclear-fuel"].icons = {
 	{
@@ -11,8 +14,6 @@ data.raw.recipe["nuclear-fuel"].icons = {
 }
 data.raw.recipe["nuclear-fuel"].icon_size = 32
 
-
-local energy = data.raw.recipe["nuclear-fuel"].energy_required
 
 data:extend({
 	{
