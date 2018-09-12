@@ -1,3 +1,5 @@
+local breeder_fuel_cell_fuel_value = BREEDER_FUEL_VALUE
+
 --uranium-235 uranium-238
 data.raw.item["uranium-235"].subgroup = "nuclear-product"
 data.raw.item["uranium-238"].subgroup = "nuclear-product"
@@ -70,7 +72,7 @@ data:extend({
 		order = "b[fuel-cell]-c[breeder-fuel-cell]",
 		fuel_category = "nuclear",
 		burnt_result = "used-up-breeder-fuel-cell",
-		fuel_value = "3.5GJ",
+		fuel_value = breeder_fuel_cell_fuel_value,
 		stack_size = 50
 	},
 	{

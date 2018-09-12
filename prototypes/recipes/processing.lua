@@ -1,3 +1,7 @@
+local breeder_fuel_reprocessing_ingredient = 10
+local pu_amount = PER_CELL_PU_AMOUNT
+
+
 --Uranium processing
 data.raw.recipe["uranium-processing"].subgroup = "nuclear-processing"
 data.raw.recipe["uranium-processing"].order = "a[enrichment-process]-a[uranium-processing]"
@@ -64,7 +68,7 @@ data:extend({
 		energy_required = 80,
 		enabled = false,
 		category = "centrifuging",
-		ingredients = {{"used-up-breeder-fuel-cell", 10}},
+		ingredients = {{"used-up-breeder-fuel-cell", breeder_fuel_reprocessing_ingredient}},
 		icon = "__nuclear-fuel-cycle__/graphics/icons/breeder-fuel-reprocessing.png",
 		icon_size = 32,
 		subgroup = "nuclear-processing",
@@ -73,7 +77,7 @@ data:extend({
 		results = {
 			{
 				name = "90%-plutonium-239",
-				amount = 38
+				amount = breeder_fuel_reprocessing_ingredient*pu_amount
 			}
 		},
 		allow_decomposition = false
