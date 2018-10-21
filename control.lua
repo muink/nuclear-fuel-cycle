@@ -1,5 +1,6 @@
 --[[Init Block]]--
 --------------------------------
+require("lualib.mathbit")
 
 --startup
 local EXACTING_MODE = settings.startup["nuclear-fuel-cycle_exacting-mode"].value
@@ -17,6 +18,8 @@ local CRITICAL_POLLUTION
 local DEBUG_INFO = false
 local FULL_UPDATE_INTERVAL = 40 --full update cycle, lowering this value increases performance overhead
 local PER_TICK_REACTOR_CONSUMPTION = 40*1e+6/60
+local FIRE_RADIUS_MIN = 1.5 --4.5
+local FIRE_RADIUS_MAX = 6
 
 --events
 local e=defines.events
@@ -35,6 +38,11 @@ local surface_del_events = {e.on_pre_surface_deleted} --before surface is delete
 local math_floor = math.floor
 local math_ceil = math.ceil
 local math_modf = math.modf
+local math_pi = math.pi
+local math_randomseed = math.randomseed
+local math_random = math.random
+local math_cos = math.cos
+local math_sin = math.sin
 
 local function load_settings()
 	MINING_LIMIT = settings.global["nuclear-fuel-cycle_mining-limit"].value
@@ -271,6 +279,24 @@ local function on_tick(event)
 				else
 					data.last_burned = nil
 					data.last_fuel_value = nil
+				end
+
+				--core meltdown
+				if meltdown_type > 0 and _runing and _overhead then
+					if mathbit.andOp(meltdown_type, 1) == 1 and reactor.valid then
+						--overheat-damage
+						reactor.damage(CRITICAL_DAMAGE, "neutral", "fire")
+					end
+					if mathbit.andOp(meltdown_type, 2) == 2 and reactor.valid then
+						--fire
+						math_randomseed(game.tick + math_random(0, FULL_UPDATE_INTERVAL))
+						local radian = 2 * math_pi * math_random()
+						local radius = math_random(FIRE_RADIUS_MIN, FIRE_RADIUS_MAX)
+						local x = reactor.position.x + math_cos(radian) * radius
+						local y = reactor.position.y + math_sin(radian) * radius
+						--reactor.surface.create_entity{name = "fire-flame-on-tree", position = reactor.position, force = "neutral"}
+						reactor.surface.create_entity{name = "fire-flame", position = {x = x, y = y}, force = "neutral", initial_ground_flame_count = FIRE_STRENGTH}
+					end
 				end
 			else
 				--for entity destroyed by destroy()
