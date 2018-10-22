@@ -175,7 +175,7 @@ end
 local function setup_global()
 	game.print({"message.exacting-mode-enabled"}, {r=1,g=1,b=0,a=1})
 	--setup the global reactors table to store reactor entity data
-	global = {reactors = {}, index = nil, count = 0, update_interval = 40, update_intensity = 1}
+	global = {reactors = {}, index = nil, count = 0, update_interval = 40, update_intensity = 1, tab_refresh_interval = 0}
 
 	--traverse all surface on map to find all nuclear reactors
 	--[[
@@ -201,10 +201,10 @@ local function on_tick(event)
 	local tick = event.tick
 	local reactors = global.reactors
 	--table status
-	table_status_refresh()
 	local reactor_count = global.count
 	local update_interval = global.update_interval
 	local update_intensity = global.update_intensity
+	local tab_refresh_interval = global.tab_refresh_interval
 
 	if reactor_count > 0 and tick % update_interval == 0 then
 		--debug_log("update_interval: " .. update_interval)
@@ -246,6 +246,16 @@ local function on_tick(event)
 		until(update_intensity <= 0)
 
 		global.index = index
+
+		--refresh table status on every FULL_UPDATE_INTERVAL
+		tab_refresh_interval = tab_refresh_interval + update_interval
+		if tab_refresh_interval >= FULL_UPDATE_INTERVAL*3 then
+			debug_log("reactor count: " .. reactor_count, {r=1,g=1,b=0,a=1})
+			table_status_refresh()
+			global.tab_refresh_interval = 0 --reset tab_refresh_interval
+		else
+			global.tab_refresh_interval = tab_refresh_interval
+		end
 	end
 end
 
