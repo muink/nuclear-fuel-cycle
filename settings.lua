@@ -56,6 +56,37 @@ data:extend({
 		maximum_value = 1000,
 		order = "b"
 	},
+	{
+		type = "bool-setting",
+		name = prefix .. "critical-pollution",
+		setting_type = "runtime-global",
+		default_value = true,
+		order = "b-a"
+	},
+	{
+		type = "string-setting",
+		name = prefix .. "core-meltdown-type",
+		setting_type = "runtime-global",
+		default_value = "fire",
+		allowed_values = {"off", "overheat-damage", "fire"},
+		order = "b-b[damagetype]"
+	},
+	{
+		type = "double-setting",
+		name = prefix .. "critical-damage",
+		setting_type = "runtime-global",
+		default_value = 18.0,
+		minimum_value = 1,
+		order = "b-b[damagetype]-b"
+	},
+	{
+		type = "double-setting",
+		name = prefix .. "fire-strength",
+		setting_type = "runtime-global",
+		default_value = 7.0,
+		minimum_value = 1,
+		order = "b-b[damagetype]-c"
+	},
 ---------misc
 	{
 		type = "bool-setting",

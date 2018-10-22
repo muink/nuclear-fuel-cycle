@@ -9,6 +9,10 @@ local MINING_LIMIT
 local POLLUTION_MULTIPLIER
 local DESTRUCTION_POLLUTION
 local CRITICAL_TEMPERATURE
+local CORE_MELTDOWN_TYPE
+	local CRITICAL_DAMAGE
+	local FIRE_STRENGTH
+local CRITICAL_POLLUTION
 --------
 local DEBUG_INFO = false
 local FULL_UPDATE_INTERVAL = 40 --full update cycle, lowering this value increases performance overhead
@@ -37,6 +41,16 @@ local function load_settings()
 	POLLUTION_MULTIPLIER = settings.global["nuclear-fuel-cycle_pollution-multiplier"].value
 	DESTRUCTION_POLLUTION = settings.global["nuclear-fuel-cycle_destruction-pollution"].value
 	CRITICAL_TEMPERATURE = settings.global["nuclear-fuel-cycle_critical-temperature"].value
+	CORE_MELTDOWN_TYPE = function()
+		local type = settings.global["nuclear-fuel-cycle_core-meltdown-type"].value
+		if type == "off" then return 0 end
+		if type == "overheat-damage" then return 1 end
+		if type == "fire" then return 2 end
+		if type == "both" then return 3 end
+	end
+	CRITICAL_DAMAGE = settings.global["nuclear-fuel-cycle_critical-damage"].value/60*FULL_UPDATE_INTERVAL
+	FIRE_STRENGTH = settings.global["nuclear-fuel-cycle_fire-strength"].value
+	CRITICAL_POLLUTION = settings.global["nuclear-fuel-cycle_critical-pollution"].value
 	DEBUG_INFO = settings.global["nuclear-fuel-cycle_debug_mode"].value
 end
 
@@ -224,8 +238,12 @@ local function on_tick(event)
 			local reactor = data.reactor
 
 			if reactor.valid then
+				local _runing = reactor_runing_status(reactor) and true
+				local _overhead = reactor.temperature >= CRITICAL_TEMPERATURE
+				local meltdown_type = CORE_MELTDOWN_TYPE()
+
 				--mining limit
-				if MINING_LIMIT and reactor_runing_status(reactor) then
+				if MINING_LIMIT and _runing then
 					--cancel deconstruction when reactor is running and MINING_LIMIT = true
 					if reactor.to_be_deconstructed(reactor.force) then
 						reactor.cancel_deconstruction(reactor.force)
@@ -234,6 +252,25 @@ local function on_tick(event)
 					reactor.minable = false
 				else
 					reactor.minable = true
+				end
+
+				--critical pollution
+				if CRITICAL_POLLUTION and _runing and _overhead then
+					local current_burned, current_fuel_value = reactor_runing_status(reactor)
+					local last_burned = data.last_burned or current_burned
+					local last_fuel_value = data.last_fuel_value or current_fuel_value
+					local burned_fuel
+					if current_burned >= last_burned then
+						burned_fuel = math_modf((current_burned - last_burned)/1e+6)
+					else
+						burned_fuel = math_modf((current_burned + last_fuel_value - last_burned)/1e+6)
+					end
+					reactor.surface.pollute(reactor.position, burned_fuel * POLLUTION_MULTIPLIER)
+					debug_log("critical pollution: " .. burned_fuel * POLLUTION_MULTIPLIER, {r=0.75,g=0,b=1,a=1})
+					data.last_burned = current_burned
+				else
+					data.last_burned = nil
+					data.last_fuel_value = nil
 				end
 			else
 				--for entity destroyed by destroy()
