@@ -147,13 +147,70 @@ end
 
 local function setup_global()
 	game.print({"message.exacting-mode-enabled"}, {r=1,g=1,b=0,a=1})
-	global = {reactors = {}}
+	--setup the global reactors table to store reactor entity data
+	global = {reactors = {}, index = nil}
 
 	--traverse all surface on map to find all nuclear reactors
+	--[[
 	for _, surface in pairs(game.surfaces) do
 		for _, reactor in pairs(surface.find_entities_filtered{type="reactor"}) do
 			built({created_entity = reactor})
 		end
+	end
+	--]]
+	--a version that enhances performance
+	local surfaces = game.surfaces
+	for i=1, #surfaces do
+		local reactors = surfaces[i].find_entities_filtered{type="reactor"}
+		for i=1, #reactors do
+			local reactor = reactors[i]
+			built({created_entity = reactor})
+		end
+	end
+end
+
+local function on_tick(event)
+	local tick = event.tick
+	local reactors = global.reactors
+
+	if tick % FULL_UPDATE_INTERVAL == 0 then
+
+		local next = _G.next --https://springrts.com/wiki/Lua_Performance
+		local index, data = global.index, nil
+
+		do
+			::redo::
+			if index and reactors[index] then
+				data = reactors[index]
+			else
+				index, data = next(reactors, index)
+				if not data then goto continue end
+			end
+			local reactor = data.reactor
+
+			if reactor.valid then
+				--mining limit
+				if MINING_LIMIT and reactor_runing_status(reactor) then
+					--cancel deconstruction when reactor is running and MINING_LIMIT = true
+					if reactor.to_be_deconstructed(reactor.force) then
+						reactor.cancel_deconstruction(reactor.force)
+						debug_log("Cancel deconstruction")
+					end
+					reactor.minable = false
+				else
+					reactor.minable = true
+				end
+			else
+				--for entity destroyed by destroy()
+				reactors[index] = nil
+				debug_log("Removed an invalid reactor entity")
+				goto redo
+			end
+			index = next(reactors, index)
+			::continue::
+		end
+
+		global.index = index
 	end
 end
 
@@ -171,6 +228,8 @@ script.on_init(setup_global)
 script.on_configuration_changed(setup_global)
 script.on_event(e.on_runtime_mod_setting_changed, load_settings)
 
+--main
+script.on_event(defines.events.on_tick, on_tick)
 
 --all game build/remove events handler
 script.on_event(built_events, built)
