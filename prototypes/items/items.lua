@@ -1,5 +1,6 @@
 local breeder_fuel_cell_fuel_value = BREEDER_FUEL_VALUE
 
+
 --uranium-235 uranium-238
 data.raw.item["uranium-235"].subgroup = "nuclear-product"
 data.raw.item["uranium-238"].subgroup = "nuclear-product"
