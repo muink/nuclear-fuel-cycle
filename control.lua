@@ -21,6 +21,7 @@ local mining_events = {e.on_pre_player_mined_item, e.on_robot_pre_mined} --after
 local mined_events = {e.on_player_mined_entity, e.on_robot_mined_entity} --after results are collected before entity is destroyed
 local mineditem_events = {e.on_player_mined_item, e.on_robot_mined} --at result items given to the player/robot
 local died_events = {e.on_entity_died}
+local surface_del_events = {e.on_pre_surface_deleted} --before surface is deleted
 
 
 
@@ -132,6 +133,18 @@ local function built(event)
 	end
 end
 
+local function surface_del(event)
+	local index = event.surface_index
+	local surface = game.surfaces[index]
+	local reactors = surface.find_entities_filtered{type="reactor"}
+	for i=1, #reactors do
+		local id = reactors[i].unit_number
+		global.reactors[id] = nil
+	end
+	debug_log("The surface #" .. index .. ": \"" .. surface.name .. "\" is deleted")
+	debug_log("Remove " ..  #reactors .. " reactors of this surface from table")
+end
+
 local function setup_global()
 	game.print({"message.exacting-mode-enabled"}, {r=1,g=1,b=0,a=1})
 	global = {reactors = {}}
@@ -165,5 +178,6 @@ script.on_event(built_events, built)
 script.on_event(mined_events, mined)
 --script.on_event(mineditem_events, mineditem)
 script.on_event(died_events, died)
+script.on_event(surface_del_events, surface_del)
 
 end
