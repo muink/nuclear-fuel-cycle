@@ -1,4 +1,7 @@
 
+--multicolor reactor object
+MULTICOLOR_REACTOR = settings.startup["nuclear-fuel-cycle_multicolor-reactor"].value
+
 --breeder fuel cell item
 BREEDER_FUEL_VALUE = "3.5GJ"
 
