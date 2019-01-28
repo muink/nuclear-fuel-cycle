@@ -26,6 +26,11 @@ reactor_mask_normal = table.deepcopy(reactor_origin_copy)
 	reactor_mask_normal.minable = nil
 	if DEBUG_PROTOTYPES then reactor_mask_normal.minable = {mining_time = 1.5, result = nil} end
 	reactor_mask_normal.consumption = "1W"
+	reactor_mask_normal.working_sound = {
+		sound = {filename = "__nuclear-fuel-cycle__/sound/reactor-active.ogg", volume = 0.6},
+		apparent_volume = 1.5,
+		audible_distance_modifier = 1
+	}
 	reactor_mask_normal.lower_layer_picture = nil
 	reactor_mask_normal.picture.layers[2] = nil
 	reactor_mask_normal.connection_patches_connected.filename = "__nuclear-fuel-cycle__/graphics/transparent32.png"
