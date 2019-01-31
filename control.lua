@@ -4,6 +4,7 @@ require("lualib.mathbit")
 
 --startup
 local EXACTING_MODE = settings.startup["nuclear-fuel-cycle_exacting-mode"].value
+local MULTICOLOR_REACTOR = settings.startup["nuclear-fuel-cycle_multicolor-reactor"].value
 
 --runing
 local MINING_LIMIT
@@ -103,6 +104,88 @@ end
 
 
 
+--[[Reactor control function Block]]--
+--------------------------------
+
+--delete reactor record from table
+local function delete_reactor(unit_number)
+	--remove mask entity
+	local mask = global.reactors[unit_number].mask
+	if mask.valid then mask.destroy() end
+	--delete FULL reactor record
+	global.reactors[unit_number] = nil
+end
+
+local function mask_status_control(data)
+end
+
+local function reactor_status_control(data, reload_phase)
+	local reactor = data.reactor
+	local _runing = reactor_runing_status(reactor) and true
+	local _overhead = reactor.temperature >= CRITICAL_TEMPERATURE
+	local meltdown_type = CORE_MELTDOWN_TYPE()
+
+	--mining limit
+	if MINING_LIMIT then
+		if _runing then
+			--cancel deconstruction when reactor is running and MINING_LIMIT = true
+			if reactor.to_be_deconstructed(reactor.force) then
+				reactor.cancel_deconstruction(reactor.force)
+				debug_log("Cancel deconstruction")
+			end
+			reactor.minable = false
+		else
+			reactor.minable = true
+		end
+	elseif reload_phase > 0 then
+		reactor.minable = true
+	end
+
+	--critical pollution
+	if CRITICAL_POLLUTION then
+		if _runing and _overhead then
+			local current_burned, current_fuel_value = reactor_runing_status(reactor)
+			local last_burned = data.last_burned or current_burned
+			local last_fuel_value = data.last_fuel_value or current_fuel_value
+			local burned_fuel
+			if current_burned >= last_burned then
+				burned_fuel = math_modf((current_burned - last_burned)/1e+6)
+			else
+				burned_fuel = math_modf((current_burned + last_fuel_value - last_burned)/1e+6)
+			end
+			reactor.surface.pollute(reactor.position, burned_fuel * POLLUTION_MULTIPLIER)
+			debug_log("critical pollution: " .. burned_fuel * POLLUTION_MULTIPLIER, {r=0.75,g=0,b=1,a=1})
+			data.last_burned = current_burned
+		else
+			data.last_burned = nil
+			data.last_fuel_value = nil
+		end
+	elseif reload_phase > 0 then
+		data.last_burned = nil
+		data.last_fuel_value = nil
+	end
+
+	--core meltdown
+	if meltdown_type > 0 and _runing and _overhead then
+		if mathbit.andOp(meltdown_type, 1) == 1 and reactor.valid then
+			--overheat-damage
+			reactor.damage(CRITICAL_DAMAGE, "neutral", "fire")
+		end
+		if mathbit.andOp(meltdown_type, 2) == 2 and reactor.valid then
+			--fire
+			math_randomseed(game.tick + math_random(0, FULL_UPDATE_INTERVAL))
+			local radian = 2 * math_pi * math_random()
+			local radius = math_random(FIRE_RADIUS_MIN, FIRE_RADIUS_MAX)
+			local x = reactor.position.x + math_cos(radian) * radius
+			local y = reactor.position.y + math_sin(radian) * radius
+			--reactor.surface.create_entity{name = "fire-flame-on-tree", position = reactor.position, force = "neutral"}
+			reactor.surface.create_entity{name = "fire-flame", position = {x = x, y = y}, force = "neutral", initial_ground_flame_count = FIRE_STRENGTH}
+		end
+	end
+end
+
+
+
 --[[Main Events function Block]]--
 --------------------------------
 
@@ -134,7 +217,7 @@ local function died(event)
 				debug_log("destroyed pollution: " .. burned_fuel * POLLUTION_MULTIPLIER, {r=1,g=0.25,b=0,a=1})
 			end
 		end
-		global.reactors[id] = nil
+		delete_reactor(id)
 		table_status_refresh()
 	end
 end
@@ -154,7 +237,7 @@ local function mined(event)
 		debug_log("Remove reactor from table")
 		local id = entity.unit_number
 		--if entity.die() then debug_log "kill the entity before destroyed." end --result items will be collect, corpse will generate
-		global.reactors[id] = nil
+		delete_reactor(id)
 		table_status_refresh()
 	end
 end
@@ -171,7 +254,7 @@ local function mining(event)
 			return
 		end
 		--if entity.die() then debug_log "kill the entity before results are collected." end --result items will not be collect, corpse will generate
-		global.reactors[id] = nil
+		delete_reactor(id)
 	end
 end
 --]]
@@ -182,7 +265,7 @@ local function built(event)
 	if entity.name == "nuclear-reactor" then
 		debug_log("Add reactor to table")
 		local id = entity.unit_number
-		global.reactors[id] = {reactor = entity, last_burned = false}
+		global.reactors[id] = {reactor = entity, last_burned = false, last_fuel_value = false, mask = {}}
 		table_status_refresh()
 	end
 end
@@ -193,7 +276,7 @@ local function surface_del(event)
 	local reactors = surface.find_entities_filtered{name="nuclear-reactor"}
 	for i=1, #reactors do
 		local id = reactors[i].unit_number
-		global.reactors[id] = nil
+		delete_reactor(id)
 	end
 	debug_log("The surface #" .. index .. ": \"" .. surface.name .. "\" is deleted")
 	debug_log("Remove " ..  #reactors .. " reactors of this surface from table")
@@ -260,72 +343,14 @@ local function on_tick(event)
 			end
 			local reactor = data.reactor
 
-			--reactor status control
 			if reactor.valid then
-				local _runing = reactor_runing_status(reactor) and true
-				local _overhead = reactor.temperature >= CRITICAL_TEMPERATURE
-				local meltdown_type = CORE_MELTDOWN_TYPE()
-
-				--mining limit
-				if MINING_LIMIT then
-					if _runing then
-						--cancel deconstruction when reactor is running and MINING_LIMIT = true
-						if reactor.to_be_deconstructed(reactor.force) then
-							reactor.cancel_deconstruction(reactor.force)
-							debug_log("Cancel deconstruction")
-						end
-						reactor.minable = false
-					else
-						reactor.minable = true
-					end
-				elseif reload_phase > 0 then
-					reactor.minable = true
-				end
-
-				--critical pollution
-				if CRITICAL_POLLUTION then
-					if _runing and _overhead then
-						local current_burned, current_fuel_value = reactor_runing_status(reactor)
-						local last_burned = data.last_burned or current_burned
-						local last_fuel_value = data.last_fuel_value or current_fuel_value
-						local burned_fuel
-						if current_burned >= last_burned then
-							burned_fuel = math_modf((current_burned - last_burned)/1e+6)
-						else
-							burned_fuel = math_modf((current_burned + last_fuel_value - last_burned)/1e+6)
-						end
-						reactor.surface.pollute(reactor.position, burned_fuel * POLLUTION_MULTIPLIER)
-						debug_log("critical pollution: " .. burned_fuel * POLLUTION_MULTIPLIER, {r=0.75,g=0,b=1,a=1})
-						data.last_burned = current_burned
-					else
-						data.last_burned = nil
-						data.last_fuel_value = nil
-					end
-				elseif reload_phase > 0 then
-					data.last_burned = nil
-					data.last_fuel_value = nil
-				end
-
-				--core meltdown
-				if meltdown_type > 0 and _runing and _overhead then
-					if mathbit.andOp(meltdown_type, 1) == 1 and reactor.valid then
-						--overheat-damage
-						reactor.damage(CRITICAL_DAMAGE, "neutral", "fire")
-					end
-					if mathbit.andOp(meltdown_type, 2) == 2 and reactor.valid then
-						--fire
-						math_randomseed(game.tick + math_random(0, FULL_UPDATE_INTERVAL))
-						local radian = 2 * math_pi * math_random()
-						local radius = math_random(FIRE_RADIUS_MIN, FIRE_RADIUS_MAX)
-						local x = reactor.position.x + math_cos(radian) * radius
-						local y = reactor.position.y + math_sin(radian) * radius
-						--reactor.surface.create_entity{name = "fire-flame-on-tree", position = reactor.position, force = "neutral"}
-						reactor.surface.create_entity{name = "fire-flame", position = {x = x, y = y}, force = "neutral", initial_ground_flame_count = FIRE_STRENGTH}
-					end
-				end
+				--reactor glows control
+				if MULTICOLOR_REACTOR then mask_status_control(data) end
+				--reactor status control
+				if EXACTING_MODE then reactor_status_control(data, reload_phase) end
 			else
 				--for entity destroyed by destroy()
-				reactors[index] = nil
+				delete_reactor(index)
 				debug_log("Removed an invalid reactor entity")
 				goto redo
 			end
@@ -363,7 +388,7 @@ end
 
 load_settings()
 
-if EXACTING_MODE then
+if EXACTING_MODE or MULTICOLOR_REACTOR then
 
 --setup event handler
 script.on_init(setup_global)
