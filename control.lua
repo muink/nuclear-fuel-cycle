@@ -31,6 +31,7 @@ local mined_events = {e.on_player_mined_entity, e.on_robot_mined_entity} --after
 local mineditem_events = {e.on_player_mined_item, e.on_robot_mined} --at result items given to the player/robot
 local died_events = {e.on_entity_died}
 local surface_del_events = {e.on_pre_surface_deleted} --before surface is deleted
+local player_created_events = {e.on_player_created}
 
 
 
@@ -283,13 +284,20 @@ local function surface_del(event)
 	table_status_refresh()
 end
 
+local function player_created(event)
+	local player = game.players[event.player_index]
+	if EXACTING_MODE then player.print({"message.exacting-mode-enabled"}, {r=1,g=1,b=0,a=1}) end
+	if MULTICOLOR_REACTOR then player.print({"message.multicolor-reactor-enabled"}, {r=1,g=1,b=0,a=1}) end
+end
+
 
 
 --[[Main function Block]]--
 --------------------------------
 
 local function setup_global()
-	game.print({"message.exacting-mode-enabled"}, {r=1,g=1,b=0,a=1})
+	if EXACTING_MODE then game.print({"message.exacting-mode-enabled"}, {r=1,g=1,b=0,a=1}) end
+	if MULTICOLOR_REACTOR then game.print({"message.multicolor-reactor-enabled"}, {r=1,g=1,b=0,a=1}) end
 	--setup the global reactors table to store reactor entity data
 	global = {reactors = {}, index = nil, count = 0, update_interval = 40, update_intensity = 1, tab_refresh_interval = 0, reload_phase = 0}
 
@@ -405,5 +413,6 @@ script.on_event(mined_events, mined)
 --script.on_event(mineditem_events, mineditem)
 script.on_event(died_events, died)
 script.on_event(surface_del_events, surface_del)
+script.on_event(player_created_events, player_created)
 
 end
