@@ -1,6 +1,6 @@
 
 --items for multicolor reactor mask
-if MULTICOLOR_REACTOR and DEBUG_PROTOTYPES then
+if DEBUG_PROTOTYPES then
 	origin = data.raw.item["nuclear-reactor"]
 
 	for key in pairs(colors) do
@@ -24,9 +24,9 @@ data:extend({
 		flags = {"goes-to-main-inventory", "hidden"},
 		subgroup = "reactor-mask",
 		order = "a[fuel-cell]",
-		fuel_category = "nuclear",
+		fuel_category = "fake-nuclear",
 		burnt_result = nil,
-		fuel_value = "10GJ",
-		stack_size = 50
+		fuel_value = "100GJ",
+		stack_size = 5000
 	}
 })
