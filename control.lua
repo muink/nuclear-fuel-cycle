@@ -1,6 +1,7 @@
 --[[Init Block]]--
 --------------------------------
 require("lualib.mathbit")
+require("colors")
 
 --startup
 local EXACTING_MODE = settings.startup["nuclear-fuel-cycle_exacting-mode"].value
@@ -16,6 +17,7 @@ local CORE_MELTDOWN_TYPE
 	local FIRE_STRENGTH
 local CRITICAL_POLLUTION
 --------
+local DEBUG = false
 local DEBUG_INFO = false
 local FULL_UPDATE_INTERVAL = 40 --full update cycle, lowering this value increases performance overhead
 local SAFE_FULL_UPDATE_INTERVAL = FULL_UPDATE_INTERVAL*3
@@ -115,6 +117,35 @@ local function delete_reactor(unit_number)
 	if mask.valid then mask.destroy() end
 	--delete FULL reactor record
 	global.reactors[unit_number] = nil
+end
+
+--remove all mask on all surface
+local function remove_all_mask()
+	local surfaces = game.surfaces
+	for key in pairs(colors) do
+		for i=1, #surfaces do
+			local masks = surfaces[i].find_entities_filtered{name="nuclear-reactor-mask-" .. key}
+			--remove mask
+			for i=1, #masks do masks[i].destroy() end
+		end
+	end
+	debug_log("Remove all mask entities")
+end
+
+--generate reactor mask
+local function gen_mask(data, color)
+	local color = color or "normal"
+	local reactor = data.reactor
+	local mask = data.mask
+
+	--generate mask
+	data.mask = reactor.surface.create_entity{name = "nuclear-reactor-mask-" .. color, position = reactor.position, force = reactor.force, fast_replace = true, spill = false}
+	mask = data.mask
+	--mask.minable = false
+	mask.destructible = false
+	--mask.active = false
+	--mask.operable = false --Disable interface open
+	mask.insert({name = "fake-fuel-cell", count = 5000})
 end
 
 local function mask_status_control(data)
@@ -300,6 +331,9 @@ local function setup_global()
 	if MULTICOLOR_REACTOR then game.print({"message.multicolor-reactor-enabled"}, {r=1,g=1,b=0,a=1}) end
 	--setup the global reactors table to store reactor entity data
 	global = {reactors = {}, index = nil, count = 0, update_interval = 40, update_intensity = 1, tab_refresh_interval = 0, reload_phase = 0}
+	local surfaces = game.surfaces
+	
+	if MULTICOLOR_REACTOR and not DEBUG then remove_all_mask() end
 
 	--traverse all surface on map to find all nuclear reactors
 	--[[
@@ -310,7 +344,6 @@ local function setup_global()
 	end
 	--]]
 	--a version that enhances performance
-	local surfaces = game.surfaces
 	for i=1, #surfaces do
 		local reactors = surfaces[i].find_entities_filtered{name="nuclear-reactor"}
 		for i=1, #reactors do

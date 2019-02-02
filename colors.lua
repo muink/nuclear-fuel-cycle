@@ -1,5 +1,10 @@
 
+--for control.lua runtime
 colors = {normal={}, red={}, orangered={}, orange={}, yelloworange={}, yellow={}, yellowgreen={}, green={}, cyan={}, blue={}}
+
+
+--for data stage
+if data and data.raw then
 
 --entity subgroup
 data:extend({
@@ -75,3 +80,5 @@ colors["cyan"].entity_glow = {intensity = 0.6, size = 9.9, shift = {0.0, 0.0}, c
 --blue
 colors["blue"].order = "b-f-a[blue]"
 colors["blue"].entity_glow = {intensity = 0.8, size = 9.9, shift = {0.0, 0.0}, color = {r = 0.0, g = 0.65, b = 0.94}}
+
+end
