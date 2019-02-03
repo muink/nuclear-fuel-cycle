@@ -1,6 +1,7 @@
 
 --for control.lua runtime
 colors = {normal={}, red={}, orangered={}, orange={}, yelloworange={}, yellow={}, yellowgreen={}, green={}, cyan={}, blue={}}
+fuel_glow = {uranium_fuel_cell = "normal", mox_fuel_cell = "yellow", breeder_fuel_cell = "orange"}
 
 
 --for data stage
@@ -41,6 +42,15 @@ colors["normal"] = {
 	entity_glow = table.deepcopy(data.raw.reactor["nuclear-reactor"].light)
 }
 
+else
+--for control.lua runtime
+	colors["normal"].order = "a[normal]"
+	colors["normal"].entity_glow = {intensity = 0.6, size = 11, shift = {0.0, 0.0}, color = {r = 1.0, g = 1.0, b = 1.0}}
+end
+
+
+--for control.lua runtime
+
 --red
 colors["red"].order = "b-a-a[red]"
 colors["red"].entity_glow = {intensity = 0.6, size = 11, shift = {0.0, 0.0}, color = {r = 1.0, g = 0.0, b = 0.0}}
@@ -80,5 +90,3 @@ colors["cyan"].entity_glow = {intensity = 0.6, size = 9.9, shift = {0.0, 0.0}, c
 --blue
 colors["blue"].order = "b-f-a[blue]"
 colors["blue"].entity_glow = {intensity = 0.8, size = 9.9, shift = {0.0, 0.0}, color = {r = 0.0, g = 0.65, b = 0.94}}
-
-end

@@ -78,8 +78,8 @@ end
 
 --reactor running? and remaining burning fuel value?
 local function reactor_runing_status(reactor)
-	--return NOT running or BURNED fuel value and fuel_value of current fuel cell
-	return reactor.burner.remaining_burning_fuel > 0 and reactor.burner.currently_burning.fuel_value - reactor.burner.remaining_burning_fuel, reactor.burner.remaining_burning_fuel > 0 and reactor.burner.currently_burning.fuel_value
+	--return NOT running or BURNED fuel value and fuel_value of current fuel cell and name of current fuel cell
+	return reactor.burner.remaining_burning_fuel > 0 and reactor.burner.currently_burning.fuel_value - reactor.burner.remaining_burning_fuel, reactor.burner.remaining_burning_fuel > 0 and reactor.burner.currently_burning.fuel_value, reactor.burner.remaining_burning_fuel > 0 and reactor.burner.currently_burning.name
 end
 
 local function table_length(tab)
@@ -139,6 +139,7 @@ local function gen_mask(data, color)
 	local mask = data.mask
 
 	--generate mask
+	debug_log("Mask generated: \"" .. color .. "\"", colors[color].entity_glow.color)
 	data.mask = reactor.surface.create_entity{name = "nuclear-reactor-mask-" .. color, position = reactor.position, force = reactor.force, fast_replace = true, spill = false}
 	mask = data.mask
 	--mask.minable = false
@@ -146,6 +147,17 @@ local function gen_mask(data, color)
 	--mask.active = false
 	--mask.operable = false --Disable interface open
 	mask.insert({name = "fake-fuel-cell", count = 5000})
+end
+
+--pick and place mask
+local function pick_and_place_mask(data, fuel_name)
+	local reactor = data.reactor
+
+	if fuel_name then
+		gen_mask(data, fuel_glow[(string.gsub(fuel_name, "-", "_"))])
+		--set fuel name
+		data.last_fuel_name = fuel_name
+	end
 end
 
 local function mask_status_control(data)
@@ -297,7 +309,12 @@ local function built(event)
 	if entity.name == "nuclear-reactor" then
 		debug_log("Add reactor to table")
 		local id = entity.unit_number
-		global.reactors[id] = {reactor = entity, last_burned = false, last_fuel_value = false, mask = {}}
+		global.reactors[id] = {reactor = entity, last_burned = false, last_fuel_value = false, last_fuel_name = false, mask = {}}
+		if MULTICOLOR_REACTOR then
+			local data = global.reactors[id]
+			local _, _, fuel_name = reactor_runing_status(data.reactor)
+			pick_and_place_mask(data, fuel_name)
+		end
 		table_status_refresh()
 	end
 end
