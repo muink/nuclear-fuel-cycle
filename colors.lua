@@ -50,11 +50,11 @@ colors["orange"].entity_glow = {intensity = 0.8, size = 11, shift = {0.0, 0.0}, 
 
 --yelloworange
 colors["yelloworange"].order = "b-b-b[yelloworange]"
-colors["yelloworange"].entity_glow = {intensity = 0.6, size = 11, shift = {0.0, 0.0}, color = {r = 1.0, g = 0.65, b = 0.0}}
+colors["yelloworange"].entity_glow = {intensity = 0.6, size = 11, shift = {0.0, 0.0}, color = {r = 1.0, g = 0.7, b = 0.0}}
 
 --yellow
 colors["yellow"].order = "b-c-a[yellow]"
-colors["yellow"].entity_glow = {intensity = 0.6, size = 9.9, shift = {0.0, 0.0}, color = {r = 1.0, g = 0.8, b = 0.0}}
+colors["yellow"].entity_glow = {intensity = 0.6, size = 9.9, shift = {0.0, 0.0}, color = {r = 1.0, g = 0.9, b = 0.0}}
 
 --yellowgreen
 colors["yellowgreen"].order = "b-c-b[yellowgreen]"
