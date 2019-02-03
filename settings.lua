@@ -16,6 +16,13 @@ data:extend({
 		setting_type = "startup",
 		default_value = true,
 		order = "b"
+	},
+	{
+		type = "bool-setting",
+		name = prefix .. "multicolor-reactor",
+		setting_type = "startup",
+		default_value = true,
+		order = "c"
 	}
 })
 
