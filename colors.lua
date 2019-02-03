@@ -1,5 +1,11 @@
 
+--for control.lua runtime
 colors = {normal={}, red={}, orangered={}, orange={}, yelloworange={}, yellow={}, yellowgreen={}, green={}, cyan={}, blue={}}
+fuel_glow = {uranium_fuel_cell = "normal", mox_fuel_cell = "yellow", breeder_fuel_cell = "orange"}
+
+
+--for data stage
+if data and data.raw then
 
 --entity subgroup
 data:extend({
@@ -35,6 +41,15 @@ colors["normal"] = {
 	entity_light_hrimg = {img = data.raw.reactor["nuclear-reactor"].working_light_picture.hr_version.filename, width = 320, height = 320, scale = 0.5},
 	entity_glow = table.deepcopy(data.raw.reactor["nuclear-reactor"].light)
 }
+
+else
+--for control.lua runtime
+	colors["normal"].order = "a[normal]"
+	colors["normal"].entity_glow = {intensity = 0.6, size = 11, shift = {0.0, 0.0}, color = {r = 1.0, g = 1.0, b = 1.0}}
+end
+
+
+--for control.lua runtime
 
 --red
 colors["red"].order = "b-a-a[red]"
