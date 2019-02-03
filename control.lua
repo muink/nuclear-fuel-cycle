@@ -147,6 +147,7 @@ local function gen_mask(data, color)
 	--mask.active = false
 	--mask.operable = false --Disable interface open
 	mask.insert({name = "fake-fuel-cell", count = 5000})
+	data.mask_off_time = "on"
 end
 
 --pick and place mask
@@ -161,6 +162,64 @@ local function pick_and_place_mask(data, fuel_name)
 end
 
 local function mask_status_control(data)
+	local reactor = data.reactor
+	local mask = data.mask
+	local last_fuel_name = data.last_fuel_name
+	local _mask = mask.valid
+	local mask_off_time = data.mask_off_time
+	local _, _, current_fuel_name = reactor_runing_status(reactor)
+
+	if current_fuel_name then
+	--fuel inventory is not empty
+
+		if _mask then
+			if current_fuel_name == last_fuel_name then
+				local rx, ry = reactor.position.x, reactor.position.y
+				local mx, my = mask.position.x, mask.position.y
+
+				--sync position
+				if not (mx == rx) or not (my == ry) then mask.teleport(reactor.position) end
+				--Refueling "fake-fuel-cell"
+			else
+			--fuel is changed
+				mask.teleport(reactor.position)
+				pick_and_place_mask(data, current_fuel_name)
+			end
+		else
+			pick_and_place_mask(data, current_fuel_name)
+		end
+	else
+	--fuel inventory is empty
+
+		--set fuel name
+		if last_fuel_name then data.last_fuel_name = false end
+
+		if _mask then
+		--wait for glow off animation to stop
+
+			if mask_off_time == "on" then
+				--closs mask glow
+				mask.burner.inventory.clear()
+				mask.burner.remaining_burning_fuel = 0
+				data.mask_off_time = 90 --remove mask after 1.5 seconds
+			elseif mask_off_time > 0 then
+				--debug_log(data.mask_off_time)
+				data.mask_off_time = mask_off_time - FULL_UPDATE_INTERVAL
+			else
+				--remove mask
+				debug_log("Mask removed.")
+				mask.destroy()
+				data.mask_off_time = "off"
+				data.mask = {}
+			end
+		else
+		--if not exist then delete record
+			if not (mask_off_time == "off") then
+				data.mask_off_time = "off"
+				data.mask = {}
+			end
+		end
+	end
 end
 
 local function reactor_status_control(data, reload_phase)
@@ -309,7 +368,7 @@ local function built(event)
 	if entity.name == "nuclear-reactor" then
 		debug_log("Add reactor to table")
 		local id = entity.unit_number
-		global.reactors[id] = {reactor = entity, last_burned = false, last_fuel_value = false, last_fuel_name = false, mask = {}}
+		global.reactors[id] = {reactor = entity, last_burned = false, last_fuel_value = false, last_fuel_name = false, mask = {}, mask_off_time = "off"}
 		if MULTICOLOR_REACTOR then
 			local data = global.reactors[id]
 			local _, _, fuel_name = reactor_runing_status(data.reactor)
