@@ -9,13 +9,13 @@ data.raw.item["uranium-238"].order = "a[material]-a[uranium]-b[238]"
 
 
 --Nuclear fuel cell
-data.raw.item["uranium-fuel-cell"].subgroup = "nuclear-product"
-data.raw.item["uranium-fuel-cell"].order = "b[fuel-cell]-a[uranium-fuel-cell]"
+data.raw.item["uranium-fuel-cell"].subgroup = "nuclear-fuel"
+data.raw.item["uranium-fuel-cell"].order = "a[uranium-fuel-cell]"
 
 
 --Used up nuclear fuel cell
-data.raw.item["used-up-uranium-fuel-cell"].subgroup = "nuclear-product"
-data.raw.item["used-up-uranium-fuel-cell"].order = "b[fuel-cell]-a[used-up-uranium-fuel-cell]"
+data.raw.item["used-up-uranium-fuel-cell"].subgroup = "nuclear-fuel"
+data.raw.item["used-up-uranium-fuel-cell"].order = "a[used-up-uranium-fuel-cell]"
 data.raw.item["used-up-uranium-fuel-cell"].localised_name = {"item-name.used-up-uranium-fuel-cell"}
 
 
@@ -46,8 +46,8 @@ data:extend({
 		icon = "__nuclear-fuel-cycle__/graphics/icons/mox-fuel-cell.png",
 		icon_size = 32,
 		flags = {"goes-to-main-inventory"},
-		subgroup = "nuclear-product",
-		order = "b[fuel-cell]-b[mox-fuel-cell]",
+		subgroup = "nuclear-fuel",
+		order = "b[mox-fuel-cell]",
 		fuel_category = "nuclear",
 		burnt_result = "used-up-mox-fuel-cell",
 		fuel_value = "8GJ",
@@ -59,8 +59,8 @@ data:extend({
 		icon = "__nuclear-fuel-cycle__/graphics/icons/used-up-mox-fuel-cell.png",
 		icon_size = 32,
 		flags = {"goes-to-main-inventory"},
-		subgroup = "nuclear-product",
-		order = "b[fuel-cell]-b[used-up-mox-fuel-cell]",
+		subgroup = "nuclear-fuel",
+		order = "b[used-up-mox-fuel-cell]",
 		stack_size = 50
 	},
 	{
@@ -69,8 +69,8 @@ data:extend({
 		icon = "__nuclear-fuel-cycle__/graphics/icons/breeder-fuel-cell.png",
 		icon_size = 32,
 		flags = {"goes-to-main-inventory"},
-		subgroup = "nuclear-product",
-		order = "b[fuel-cell]-c[breeder-fuel-cell]",
+		subgroup = "nuclear-fuel",
+		order = "c[breeder-fuel-cell]",
 		fuel_category = "nuclear",
 		burnt_result = "used-up-breeder-fuel-cell",
 		fuel_value = breeder_fuel_cell_fuel_value,
@@ -82,8 +82,8 @@ data:extend({
 		icon = "__nuclear-fuel-cycle__/graphics/icons/used-up-breeder-fuel-cell.png",
 		icon_size = 32,
 		flags = {"goes-to-main-inventory"},
-		subgroup = "nuclear-product",
-		order = "b[fuel-cell]-c[used-up-breeder-fuel-cell]",
+		subgroup = "nuclear-fuel",
+		order = "c[used-up-breeder-fuel-cell]",
 		stack_size = 50
 	}
 })

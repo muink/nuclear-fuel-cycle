@@ -4,7 +4,12 @@ local pu_amount = PER_CELL_PU_AMOUNT
 
 --Uranium processing
 data.raw.recipe["uranium-processing"].subgroup = "nuclear-processing"
-data.raw.recipe["uranium-processing"].order = "a[enrichment-process]-a[uranium-processing]"
+data.raw.recipe["uranium-processing"].order = "a[uranium-processing]"
+
+
+--Kovarex Enrichment Process
+data.raw.recipe["kovarex-enrichment-process"].subgroup = "nuclear-reprocessing"
+data.raw.recipe["kovarex-enrichment-process"].order = "a[enrichment-process]-a[kovarex-enrichment-process]"
 
 
 --Nuclear fuel reprocessing
@@ -19,14 +24,9 @@ table.insert(
 	{name = "65%-plutonium-239", probability = 0.2, amount = 1}
 )
 data.raw.recipe["nuclear-fuel-reprocessing"].icon = "__nuclear-fuel-cycle__/graphics/icons/nuclear-fuel-reprocessing.png"
-data.raw.recipe["nuclear-fuel-reprocessing"].subgroup = "nuclear-processing"
-data.raw.recipe["nuclear-fuel-reprocessing"].order = "b[fuel-reprocessing]-a[uranium-fuel-reprocessing]"
+data.raw.recipe["nuclear-fuel-reprocessing"].subgroup = "nuclear-reprocessing"
+data.raw.recipe["nuclear-fuel-reprocessing"].order = "c[fuel-reprocessing]-a[uranium-fuel-reprocessing]"
 data.raw.recipe["nuclear-fuel-reprocessing"].localised_name = {"recipe-name.nuclear-fuel-reprocessing"}
-
-
---Kovarex Enrichment Process
-data.raw.recipe["kovarex-enrichment-process"].subgroup = "nuclear-processing"
-data.raw.recipe["kovarex-enrichment-process"].order = "a[enrichment-process]-b[kovarex-enrichment-process]"
 
 
 --Nuclear reprocessing
@@ -40,8 +40,8 @@ data:extend({
 		ingredients = {{"65%-plutonium-239", 20}},
 		icon = "__nuclear-fuel-cycle__/graphics/icons/plutonium-purification-process.png",
 		icon_size = 32,
-		subgroup = "nuclear-processing",
-		order = "a[nuclide-process]-a[plutonium-purification-process]",
+		subgroup = "nuclear-reprocessing",
+		order = "b[nuclide-process]-a[plutonium-purification-process]",
 		main_product = "",
 		result = "90%-plutonium-239",
 		result_count = 13,
@@ -56,8 +56,8 @@ data:extend({
 		ingredients = {{"used-up-mox-fuel-cell", 5}},
 		icon = "__nuclear-fuel-cycle__/graphics/icons/mox-fuel-reprocessing.png",
 		icon_size = 32,
-		subgroup = "nuclear-processing",
-		order = "b[fuel-reprocessing]-b[mox-fuel-reprocessing]",
+		subgroup = "nuclear-reprocessing",
+		order = "c[fuel-reprocessing]-b[mox-fuel-reprocessing]",
 		main_product = "",
 		results = {{"uranium-238", 2}},
 		allow_decomposition = false
@@ -71,8 +71,8 @@ data:extend({
 		ingredients = {{"used-up-breeder-fuel-cell", breeder_fuel_reprocessing_ingredient}},
 		icon = "__nuclear-fuel-cycle__/graphics/icons/breeder-fuel-reprocessing.png",
 		icon_size = 32,
-		subgroup = "nuclear-processing",
-		order = "b[fuel-reprocessing]-c[breeder-fuel-reprocessing]",
+		subgroup = "nuclear-reprocessing",
+		order = "c[fuel-reprocessing]-c[breeder-fuel-reprocessing]",
 		main_product = "",
 		results = {
 			{
