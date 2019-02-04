@@ -260,12 +260,12 @@ local function reactor_status_control(data, reload_phase)
 			debug_log("critical pollution: " .. burned_fuel * POLLUTION_MULTIPLIER, {r=0.75,g=0,b=1,a=1})
 			data.last_burned = current_burned
 		else
-			data.last_burned = nil
-			data.last_fuel_value = nil
+			data.last_burned = false
+			data.last_fuel_value = false
 		end
 	elseif reload_phase > 0 then
-		data.last_burned = nil
-		data.last_fuel_value = nil
+		data.last_burned = false
+		data.last_fuel_value = false
 	end
 
 	--core meltdown
