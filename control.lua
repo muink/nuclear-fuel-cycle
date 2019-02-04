@@ -405,8 +405,11 @@ end
 local function setup_global()
 	if EXACTING_MODE then game.print({"message.exacting-mode-enabled"}, {r=1,g=1,b=0,a=1}) end
 	if MULTICOLOR_REACTOR then game.print({"message.multicolor-reactor-enabled"}, {r=1,g=1,b=0,a=1}) end
-	--setup the global reactors table to store reactor entity data
-	global = {reactors = {}, index = nil, count = 0, update_interval = 40, update_intensity = 1, tab_refresh_interval = 0, reload_phase = 0}
+	--read last EXACTING_MODE status
+	local last_EXACTING_MODE
+	if global and global.EXACTING_MODE then last_EXACTING_MODE = global.EXACTING_MODE end
+	--setup the global table to store startup settings status and reactor entity data
+	global = {EXACTING_MODE = EXACTING_MODE, reactors = {}, index = nil, count = 0, update_interval = 40, update_intensity = 1, tab_refresh_interval = 0, reload_phase = 0}
 	local surfaces = game.surfaces
 	
 	if MULTICOLOR_REACTOR and not DEBUG then remove_all_mask() end
@@ -425,10 +428,32 @@ local function setup_global()
 		for i=1, #reactors do
 			local reactor = reactors[i]
 			built({created_entity = reactor})
+			if not EXACTING_MODE and not (EXACTING_MODE == last_EXACTING_MODE) then reactor.minable = true end --unlock mining limit when on_configuration_changed (for EXACTING_MODE is changed to "off")
 		end
 	end
 	table_status_refresh()
 	reset_reactor_control()
+end
+
+local function onetime_run()
+	debug_log("In noControlBack status!")
+	--read last EXACTING_MODE status
+	local last_EXACTING_MODE
+	if global and global.EXACTING_MODE then last_EXACTING_MODE = global.EXACTING_MODE else last_EXACTING_MODE = false end
+	global.EXACTING_MODE = EXACTING_MODE
+	local surfaces = game.surfaces
+	--
+	debug_log(tostring(EXACTING_MODE) .. " - " .. tostring(last_EXACTING_MODE))
+	if not EXACTING_MODE and not (EXACTING_MODE == last_EXACTING_MODE) then
+		for i=1, #surfaces do
+			local reactors = surfaces[i].find_entities_filtered{name="nuclear-reactor"}
+			for i=1, #reactors do
+				local reactor = reactors[i]
+				reactor.minable = true
+			end
+		end
+		debug_log("All reactors mining limit have been unlocked!")
+	end
 end
 
 local function on_tick(event)
@@ -523,5 +548,9 @@ script.on_event(mined_events, mined)
 script.on_event(died_events, died)
 script.on_event(surface_del_events, surface_del)
 script.on_event(player_created_events, player_created)
+
+else
+
+script.on_configuration_changed(onetime_run)
 
 end
