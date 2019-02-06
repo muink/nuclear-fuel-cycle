@@ -6,5 +6,10 @@
 	"homepage": "https://mods.factorio.com/mod/nuclear-fuel-cycle",
 	"description": "Efficient use of Nuclear Fuel.",
 	"factorio_version": "0.16",
-	"dependencies": ["base >= 0.16.30", "? RealisticReactorGlow", "? AtomicArtillery"]
+	"dependencies": [
+		"base >= 0.16.30",
+		"? RealisticReactorGlow",
+		"? MushroomCloud",
+		"? AtomicArtillery"
+	]
 }
