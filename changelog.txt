@@ -1,29 +1,33 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.4
+Date: 10. 02. 2019
+  Changes:
+    - Update changelog.txt
+---------------------------------------------------------------------------------------------------
 Version: 0.1.3
 Date: 04. 02. 2019
   Data:
-    - 定义多彩反应堆原型
-    - 为运行反应堆和空闲反应堆添加声音
-    - 重新整理核能相关物品与配方的图标
+    - Add colorful reactor prototypes
+    - Add sounds (Working and Idle) for reactor
+    - Reorganize icons for nuclear energy related items and recipes
   Control:
-    - 添加颜色表, 用于燃料棒和反应堆辉光的关联
-    - 优化调整并分离反应堆运行时控制函数, 为添加多色反应堆控制函数提供良好可读性
-    - 现在当修改了启动设置, 将在再次进入地图后通知玩家
-    - 添加多色反应堆控制函数
+    - Add colors table, used to specify the glow of the fuel cell
+    - Now when the startup settings are modified, players will be notified when they re-enter the map
+    - Add colorful reactor control functions
   Fixes:
-    - 修正关闭 "严格模式" 后, 运行中反应堆无法拆除的问题
+    - Fix after "Exacting mode" turn off, the problem that the runing reactor cannot be removed
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.2
 Date: 22. 10. 2018
   Add:
-    - 添加 严格模式 包含 拆除限制、摧毁污染、临界污染、临界反应
+    - Add "Exacting mode" include "Mining limit", "Destruction pollution", "Critical pollution", "Critical effect"
   Changes:
-    - 添加 启动设置 "钚弹配方含量"
+    - Add startup setting "Pu bomb recipe Pu content"
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.1
 Date: 12. 09. 2018
   Changes:
-    - 平衡 钚弹配方中的钚-239含量
-    - 平衡 调整钚增殖相关配方，控制其产量
+    - Balance Pu-239 content in the Pu bomb recipe
+    - Balance Adjust the Pu-proliferation-related recipes and control its yield
   Others:
-    - 添加 changelog.txt
+    - Add changelog.txt
