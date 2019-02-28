@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.0
+Date: 28. 02. 2019
+  Changes:
+    - Update to 0.17 version of Factorio
+	- Change the front-end technology of the Atomic bomb to "Nuclear energy"
+	- Change the science pack ingredients of Fast breeder reactor to 650
+	- Remove High tech science pack from ingredients of Fast breeder reactor technology
+---------------------------------------------------------------------------------------------------
 Version: 0.1.5
 Date: 28. 02. 2019
   Changes:
