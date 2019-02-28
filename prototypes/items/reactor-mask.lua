@@ -7,7 +7,7 @@ if DEBUG_PROTOTYPES then
 		item = table.deepcopy(origin)
 			item.name = "nuclear-reactor-mask-" .. key
 			item.icon = colors[key].item_icon.icon
-			item.flags = {"goes-to-main-inventory", "hidden"}
+			item.flags = {"hidden"}
 			item.subgroup = colors[key].subgroup
 			item.order = colors[key].order
 			item.place_result = "nuclear-reactor-mask-" .. key
@@ -21,7 +21,7 @@ data:extend({
 		name = "fake-fuel-cell",
 		icon = "__base__/graphics/icons/used-up-uranium-fuel-cell.png",
 		icon_size = 32,
-		flags = {"goes-to-main-inventory", "hidden"},
+		flags = {"hidden"},
 		subgroup = "reactor-mask",
 		order = "a[fuel-cell]",
 		fuel_category = "fake-nuclear",
