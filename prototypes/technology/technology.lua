@@ -36,6 +36,10 @@ data.raw["technology"]["kovarex-enrichment-process"].localised_name = {"technolo
 --]]
 
 
+--Atomic bomb
+data.raw["technology"]["atomic-bomb"].prerequisites = {"nuclear-power"}
+
+
 data:extend({
 	{
 		type = "technology",
@@ -62,14 +66,13 @@ data:extend({
 		{
 			ingredients =
 			{
-				{"science-pack-1", 1},
-				{"science-pack-2", 1},
-				{"science-pack-3", 1},
-				{"production-science-pack", 1},
-				{"high-tech-science-pack", 1}
+				{"automation-science-pack", 1},
+				{"logistic-science-pack", 1},
+				{"chemical-science-pack", 1},
+				{"production-science-pack", 1}
 			},
 			time = 30,
-			count = 850
+			count = 650
 		},
 		order = "e-p-b-c"
 	}
