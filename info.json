@@ -1,13 +1,13 @@
 {
 	"name": "nuclear-fuel-cycle",
-	"version": "0.1.5",
+	"version": "0.2.0",
 	"title": "Nuclear Fuel Cycle",
 	"author": "muink",
 	"homepage": "https://mods.factorio.com/mod/nuclear-fuel-cycle",
 	"description": "Efficient use of Nuclear Fuel.",
-	"factorio_version": "0.16",
+	"factorio_version": "0.17",
 	"dependencies": [
-		"base >= 0.16.30",
+		"base >= 0.17.0",
 		"? RealisticReactorGlow",
 		"? MushroomCloud",
 		"? AtomicArtillery"
