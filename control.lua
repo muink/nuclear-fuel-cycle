@@ -402,37 +402,30 @@ end
 --[[Main function Block]]--
 --------------------------------
 
-local function setup_global()
+local function setup_global(reset)
 	if EXACTING_MODE then game.print({"message.head", {"message.exacting-mode-enabled"}}, {r=1,g=1,b=0,a=1}) end
 	if MULTICOLOR_REACTOR then game.print({"message.head", {"message.multicolor-reactor-enabled"}}, {r=1,g=1,b=0,a=1}) end
 	--read last EXACTING_MODE status
 	local last_EXACTING_MODE
-	if global and global.EXACTING_MODE then last_EXACTING_MODE = global.EXACTING_MODE end
+	if reset and global and global.EXACTING_MODE then last_EXACTING_MODE = global.EXACTING_MODE end
+
 	--setup the global table to store startup settings status and reactor entity data
 	global = {EXACTING_MODE = EXACTING_MODE, reactors = {}, index = nil, count = 0, update_interval = 40, update_intensity = 1, tab_refresh_interval = 0, reload_phase = 0}
-	local surfaces = game.surfaces
-	
-	if MULTICOLOR_REACTOR and not DEBUG then remove_all_mask() end
+		
+	if reset and MULTICOLOR_REACTOR and not DEBUG then remove_all_mask() end
 
 	--traverse all surface on map to find all nuclear reactors
-	--[[
-	for _, surface in pairs(game.surfaces) do
-		for _, reactor in pairs(surface.find_entities_filtered{name="nuclear-reactor"}) do
-			built({created_entity = reactor})
-		end
-	end
-	--]]
-	--a version that enhances performance
+	local surfaces = game.surfaces
 	for i=1, #surfaces do
 		local reactors = surfaces[i].find_entities_filtered{name="nuclear-reactor"}
 		for i=1, #reactors do
 			local reactor = reactors[i]
 			built({created_entity = reactor})
-			if not EXACTING_MODE and not (EXACTING_MODE == last_EXACTING_MODE) then reactor.minable = true end --unlock mining limit when on_configuration_changed (for EXACTING_MODE is changed to "off")
+			if reset and not EXACTING_MODE and (not EXACTING_MODE ~= not last_EXACTING_MODE) then reactor.minable = true end --unlock mining limit when on_configuration_changed (for EXACTING_MODE is changed to "off")
 		end
 	end
 	table_status_refresh()
-	reset_reactor_control()
+	if reset then reset_reactor_control() end
 end
 
 local function onetime_run(event)
