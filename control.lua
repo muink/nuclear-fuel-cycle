@@ -76,6 +76,11 @@ local function debug_log(...)
 	if DEBUG_INFO then game.print(...) end
 end
 
+local function setting_changed_notification(caller)
+	if EXACTING_MODE then caller.print({"message.head", {"message.exacting-mode-enabled"}}, {r=1,g=1,b=0,a=1}) end
+	if MULTICOLOR_REACTOR then caller.print({"message.head", {"message.multicolor-reactor-enabled"}}, {r=1,g=1,b=0,a=1}) end
+end
+
 --reactor running? and remaining burning fuel value?
 local function reactor_runing_status(reactor)
 	--return NOT running or BURNED fuel value and fuel_value of current fuel cell and name of current fuel cell
@@ -393,8 +398,7 @@ end
 
 local function player_created(event)
 	local player = game.players[event.player_index]
-	if EXACTING_MODE then player.print({"message.head", {"message.exacting-mode-enabled"}}, {r=1,g=1,b=0,a=1}) end
-	if MULTICOLOR_REACTOR then player.print({"message.head", {"message.multicolor-reactor-enabled"}}, {r=1,g=1,b=0,a=1}) end
+	setting_changed_notification(player)
 end
 
 
@@ -403,8 +407,6 @@ end
 --------------------------------
 
 local function setup_global(reset)
-	if EXACTING_MODE then game.print({"message.head", {"message.exacting-mode-enabled"}}, {r=1,g=1,b=0,a=1}) end
-	if MULTICOLOR_REACTOR then game.print({"message.head", {"message.multicolor-reactor-enabled"}}, {r=1,g=1,b=0,a=1}) end
 	--read last EXACTING_MODE status
 	local last_EXACTING_MODE
 	if reset and global and global.EXACTING_MODE then last_EXACTING_MODE = global.EXACTING_MODE end
@@ -447,11 +449,11 @@ local function configuration_changed(event)
 				game.print({"message.head", {"message.mod-updated", tostring(mod.old_version), tostring(mod.new_version)}}, {r=1,g=0.65,b=0,a=1})
 				setup_global(true)
 			end
+			setting_changed_notification(game)
 		end
 	--startup settings check
 	elseif startup_changed then
-		if EXACTING_MODE then game.print({"message.head", {"message.exacting-mode-enabled"}}, {r=1,g=1,b=0,a=1}) end
-		if MULTICOLOR_REACTOR then game.print({"message.head", {"message.multicolor-reactor-enabled"}}, {r=1,g=1,b=0,a=1}) end
+		setting_changed_notification(game)
 		--
 		if table_length(global) > 0 then
 			local reactors = global.reactors
