@@ -428,7 +428,55 @@ local function setup_global(reset)
 	if reset then reset_reactor_control() end
 end
 
+local function configuration_changed(event)
+	local mod_changes = event.mod_changes
+	local startup_changed = event.mod_startup_settings_changed
+
+	--version check
+	if table_length(mod_changes) > 0 then
+		--[[
+		for k, v in pairs(mod_changes) do
+			debug_log(k .. ": " .. tostring(v.old_version) .. " --> " .. tostring(v.new_version))
+		end
+		]]--
+		local mod = mod_changes["nuclear-fuel-cycle"]
+		if mod then
+			if mod.old_version == nil then 
+				game.print({"message.head", {"message.mod-installed", tostring(mod.new_version)}}, {r=1,g=0.65,b=0,a=1})
+			else
+				game.print({"message.head", {"message.mod-updated", tostring(mod.old_version), tostring(mod.new_version)}}, {r=1,g=0.65,b=0,a=1})
+				setup_global(true)
+			end
+		end
+	--startup settings check
+	elseif startup_changed then
+		if EXACTING_MODE then game.print({"message.head", {"message.exacting-mode-enabled"}}, {r=1,g=1,b=0,a=1}) end
+		if MULTICOLOR_REACTOR then game.print({"message.head", {"message.multicolor-reactor-enabled"}}, {r=1,g=1,b=0,a=1}) end
+		--
+		if table_length(global) > 0 then
+			local reactors = global.reactors
+
+			--EXACTING_MODE on --> off
+			for _, data in pairs(reactors) do
+				data.last_burned = false
+				data.last_fuel_value = false
+				data.reactor.minable = true
+			end
+			--MULTICOLOR_REACTOR on --> off
+			--remove all mask...
+
+			global.EXACTING_MODE = EXACTING_MODE
+		else
+		--EXACTING_MODE and MULTICOLOR_REACTOR off --> on
+			setup_global()
+		end
+	end
+end
+
 local function onetime_run(event)
+	--version check
+
+	--startup settings check
 	if event.mod_startup_settings_changed then
 		debug_log("In noControlBack status!", {r=1,g=0.3,b=0,a=1})
 		--read last EXACTING_MODE status
@@ -529,7 +577,7 @@ if EXACTING_MODE or MULTICOLOR_REACTOR then
 
 --setup event handler
 script.on_init(setup_global)
-script.on_configuration_changed(setup_global)
+script.on_configuration_changed(configuration_changed)
 script.on_event(e.on_runtime_mod_setting_changed, load_settings)
 
 --main
