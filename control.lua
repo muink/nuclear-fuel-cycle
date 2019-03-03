@@ -119,7 +119,7 @@ end
 local function delete_reactor(unit_number)
 	--remove mask entity
 	local mask = global.reactors[unit_number].mask
-	if mask.valid then mask.destroy() end
+	if mask.valid and string.match(mask.name, "nuclear%-reactor%-mask%-.+") then mask.destroy() end
 	--delete FULL reactor record
 	global.reactors[unit_number] = nil
 end
@@ -173,6 +173,7 @@ local function mask_status_control(data)
 	local _mask = mask.valid
 	local mask_off_time = data.mask_off_time
 	local _, _, current_fuel_name = reactor_runing_status(reactor)
+	if _mask and string.match(mask.name, "nuclear%-reactor%-mask%-.+") then _mask = true else _mask = false end
 
 	if current_fuel_name then
 	--fuel inventory is not empty
@@ -465,7 +466,7 @@ local function configuration_changed(event)
 				data.reactor.minable = true
 			end
 			--MULTICOLOR_REACTOR on --> off
-			--remove all mask...
+			--remove all mask and mask records
 
 			global.EXACTING_MODE = EXACTING_MODE
 		else
@@ -530,7 +531,7 @@ local function on_tick(event)
 			end
 			local reactor = data.reactor
 
-			if reactor.valid then
+			if reactor.valid and reactor.name == "nuclear-reactor" then
 				--reactor glows control
 				if MULTICOLOR_REACTOR then mask_status_control(data) end
 				--reactor status control
