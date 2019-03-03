@@ -435,24 +435,26 @@ local function setup_global()
 	reset_reactor_control()
 end
 
-local function onetime_run()
-	debug_log("In noControlBack status!")
-	--read last EXACTING_MODE status
-	local last_EXACTING_MODE
-	if global and global.EXACTING_MODE then last_EXACTING_MODE = global.EXACTING_MODE else last_EXACTING_MODE = false end
-	global.EXACTING_MODE = EXACTING_MODE
-	local surfaces = game.surfaces
-	--
-	debug_log(tostring(EXACTING_MODE) .. " - " .. tostring(last_EXACTING_MODE))
-	if not EXACTING_MODE and not (EXACTING_MODE == last_EXACTING_MODE) then
-		for i=1, #surfaces do
-			local reactors = surfaces[i].find_entities_filtered{name="nuclear-reactor"}
-			for i=1, #reactors do
-				local reactor = reactors[i]
-				reactor.minable = true
+local function onetime_run(event)
+	if event.mod_startup_settings_changed then
+		debug_log("In noControlBack status!", {r=1,g=0.3,b=0,a=1})
+		--read last EXACTING_MODE status
+		local last_EXACTING_MODE
+		if global and global.EXACTING_MODE then last_EXACTING_MODE = global.EXACTING_MODE end
+		--
+		debug_log("EXACTING_MODE: " .. tostring(last_EXACTING_MODE) .. " --> " .. tostring(EXACTING_MODE), {r=0.8,g=0.4,b=0.6,a=1})
+		if not EXACTING_MODE and (not EXACTING_MODE ~= not last_EXACTING_MODE) then
+			local surfaces = game.surfaces
+			for i=1, #surfaces do
+				local reactors = surfaces[i].find_entities_filtered{name="nuclear-reactor"}
+				for i=1, #reactors do
+					local reactor = reactors[i]
+					reactor.minable = true
+				end
 			end
+			debug_log("All reactors mining limit have been unlocked!")
+			global={}
 		end
-		debug_log("All reactors mining limit have been unlocked!")
 	end
 end
 
@@ -538,7 +540,7 @@ script.on_configuration_changed(setup_global)
 script.on_event(e.on_runtime_mod_setting_changed, load_settings)
 
 --main
-script.on_event(defines.events.on_tick, on_tick)
+script.on_event(e.on_tick, on_tick)
 
 --all game build/remove events handler
 script.on_event(built_events, built)
