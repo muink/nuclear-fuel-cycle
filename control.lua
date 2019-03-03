@@ -393,8 +393,8 @@ end
 
 local function player_created(event)
 	local player = game.players[event.player_index]
-	if EXACTING_MODE then player.print({"message.exacting-mode-enabled"}, {r=1,g=1,b=0,a=1}) end
-	if MULTICOLOR_REACTOR then player.print({"message.multicolor-reactor-enabled"}, {r=1,g=1,b=0,a=1}) end
+	if EXACTING_MODE then player.print({"message.head", {"message.exacting-mode-enabled"}}, {r=1,g=1,b=0,a=1}) end
+	if MULTICOLOR_REACTOR then player.print({"message.head", {"message.multicolor-reactor-enabled"}}, {r=1,g=1,b=0,a=1}) end
 end
 
 
@@ -403,8 +403,8 @@ end
 --------------------------------
 
 local function setup_global()
-	if EXACTING_MODE then game.print({"message.exacting-mode-enabled"}, {r=1,g=1,b=0,a=1}) end
-	if MULTICOLOR_REACTOR then game.print({"message.multicolor-reactor-enabled"}, {r=1,g=1,b=0,a=1}) end
+	if EXACTING_MODE then game.print({"message.head", {"message.exacting-mode-enabled"}}, {r=1,g=1,b=0,a=1}) end
+	if MULTICOLOR_REACTOR then game.print({"message.head", {"message.multicolor-reactor-enabled"}}, {r=1,g=1,b=0,a=1}) end
 	--read last EXACTING_MODE status
 	local last_EXACTING_MODE
 	if global and global.EXACTING_MODE then last_EXACTING_MODE = global.EXACTING_MODE end
