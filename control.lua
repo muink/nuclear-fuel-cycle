@@ -76,6 +76,11 @@ local function debug_log(...)
 	if DEBUG_INFO then game.print(...) end
 end
 
+local function setting_changed_notification(caller)
+	if EXACTING_MODE then caller.print({"message.head", {"message.exacting-mode-enabled"}}, {r=1,g=1,b=0,a=1}) end
+	if MULTICOLOR_REACTOR then caller.print({"message.head", {"message.multicolor-reactor-enabled"}}, {r=1,g=1,b=0,a=1}) end
+end
+
 --reactor running? and remaining burning fuel value?
 local function reactor_runing_status(reactor)
 	--return NOT running or BURNED fuel value and fuel_value of current fuel cell and name of current fuel cell
@@ -114,7 +119,7 @@ end
 local function delete_reactor(unit_number)
 	--remove mask entity
 	local mask = global.reactors[unit_number].mask
-	if mask.valid then mask.destroy() end
+	if mask.valid and string.match(mask.name, "nuclear%-reactor%-mask%-.+") then mask.destroy() end
 	--delete FULL reactor record
 	global.reactors[unit_number] = nil
 end
@@ -168,6 +173,7 @@ local function mask_status_control(data)
 	local _mask = mask.valid
 	local mask_off_time = data.mask_off_time
 	local _, _, current_fuel_name = reactor_runing_status(reactor)
+	if _mask and string.match(mask.name, "nuclear%-reactor%-mask%-.+") then _mask = true else _mask = false end
 
 	if current_fuel_name then
 	--fuel inventory is not empty
@@ -178,7 +184,7 @@ local function mask_status_control(data)
 				local mx, my = mask.position.x, mask.position.y
 
 				--sync position
-				if not (mx == rx) or not (my == ry) then mask.teleport(reactor.position) end
+				if mx ~= rx or my ~= ry then mask.teleport(reactor.position) end
 				--Refueling "fake-fuel-cell"
 			else
 			--fuel is changed
@@ -214,7 +220,7 @@ local function mask_status_control(data)
 			end
 		else
 		--if not exist then delete record
-			if not (mask_off_time == "off") then
+			if mask_off_time ~= "off" then
 				data.mask_off_time = "off"
 				data.mask = {}
 			end
@@ -393,8 +399,7 @@ end
 
 local function player_created(event)
 	local player = game.players[event.player_index]
-	if EXACTING_MODE then player.print({"message.exacting-mode-enabled"}, {r=1,g=1,b=0,a=1}) end
-	if MULTICOLOR_REACTOR then player.print({"message.multicolor-reactor-enabled"}, {r=1,g=1,b=0,a=1}) end
+	setting_changed_notification(player)
 end
 
 
@@ -402,57 +407,106 @@ end
 --[[Main function Block]]--
 --------------------------------
 
-local function setup_global()
-	if EXACTING_MODE then game.print({"message.exacting-mode-enabled"}, {r=1,g=1,b=0,a=1}) end
-	if MULTICOLOR_REACTOR then game.print({"message.multicolor-reactor-enabled"}, {r=1,g=1,b=0,a=1}) end
+local function setup_global(reset)
 	--read last EXACTING_MODE status
 	local last_EXACTING_MODE
-	if global and global.EXACTING_MODE then last_EXACTING_MODE = global.EXACTING_MODE end
+	if reset and global and global.EXACTING_MODE then last_EXACTING_MODE = global.EXACTING_MODE end
+
 	--setup the global table to store startup settings status and reactor entity data
 	global = {EXACTING_MODE = EXACTING_MODE, reactors = {}, index = nil, count = 0, update_interval = 40, update_intensity = 1, tab_refresh_interval = 0, reload_phase = 0}
-	local surfaces = game.surfaces
-	
-	if MULTICOLOR_REACTOR and not DEBUG then remove_all_mask() end
+		
+	if reset and MULTICOLOR_REACTOR and not DEBUG then remove_all_mask() end
 
 	--traverse all surface on map to find all nuclear reactors
-	--[[
-	for _, surface in pairs(game.surfaces) do
-		for _, reactor in pairs(surface.find_entities_filtered{name="nuclear-reactor"}) do
-			built({created_entity = reactor})
-		end
-	end
-	--]]
-	--a version that enhances performance
+	local surfaces = game.surfaces
 	for i=1, #surfaces do
 		local reactors = surfaces[i].find_entities_filtered{name="nuclear-reactor"}
 		for i=1, #reactors do
 			local reactor = reactors[i]
 			built({created_entity = reactor})
-			if not EXACTING_MODE and not (EXACTING_MODE == last_EXACTING_MODE) then reactor.minable = true end --unlock mining limit when on_configuration_changed (for EXACTING_MODE is changed to "off")
+			if reset and not EXACTING_MODE and (not EXACTING_MODE ~= not last_EXACTING_MODE) then reactor.minable = true end --unlock mining limit when on_configuration_changed (for EXACTING_MODE is changed to "off")
 		end
 	end
 	table_status_refresh()
-	reset_reactor_control()
+	if reset then reset_reactor_control() end
 end
 
-local function onetime_run()
-	debug_log("In noControlBack status!")
-	--read last EXACTING_MODE status
-	local last_EXACTING_MODE
-	if global and global.EXACTING_MODE then last_EXACTING_MODE = global.EXACTING_MODE else last_EXACTING_MODE = false end
-	global.EXACTING_MODE = EXACTING_MODE
-	local surfaces = game.surfaces
-	--
-	debug_log(tostring(EXACTING_MODE) .. " - " .. tostring(last_EXACTING_MODE))
-	if not EXACTING_MODE and not (EXACTING_MODE == last_EXACTING_MODE) then
-		for i=1, #surfaces do
-			local reactors = surfaces[i].find_entities_filtered{name="nuclear-reactor"}
-			for i=1, #reactors do
-				local reactor = reactors[i]
-				reactor.minable = true
-			end
+local function configuration_changed(event)
+	local mod_changes = event.mod_changes
+	local startup_changed = event.mod_startup_settings_changed
+	local _modchanged
+
+	--version check
+	if table_length(mod_changes) > 0 then
+		--[[
+		for k, v in pairs(mod_changes) do
+			debug_log(k .. ": " .. tostring(v.old_version) .. " --> " .. tostring(v.new_version))
 		end
-		debug_log("All reactors mining limit have been unlocked!")
+		]]--
+		local mod = mod_changes["nuclear-fuel-cycle"]
+		if mod then
+			if mod.old_version == nil then 
+				game.print({"message.head", {"message.mod-installed", tostring(mod.new_version)}}, {r=1,g=0.65,b=0,a=1})
+			else
+				game.print({"message.head", {"message.mod-updated", tostring(mod.old_version), tostring(mod.new_version)}}, {r=1,g=0.65,b=0,a=1})
+				setup_global(true)
+			end
+			setting_changed_notification(game)
+			_modchanged = true
+		end
+		--not is nuclear-fuel-cycle
+	end
+	--startup settings check
+	if not _modchanged and startup_changed then
+		setting_changed_notification(game)
+		--
+		if table_length(global) > 0 then
+			local reactors = global.reactors
+			local last_EXACTING_MODE = global.EXACTING_MODE
+
+			--EXACTING_MODE on --> off
+			if not EXACTING_MODE and (not EXACTING_MODE ~= not last_EXACTING_MODE) then
+				for _, data in pairs(reactors) do
+					data.last_burned = false
+					data.last_fuel_value = false
+					data.reactor.minable = true
+				end
+			end
+
+			--MULTICOLOR_REACTOR on --> off
+			--remove all mask and mask records
+
+			global.EXACTING_MODE = EXACTING_MODE
+		else
+		--EXACTING_MODE and MULTICOLOR_REACTOR off --> on
+			setup_global()
+		end
+	end
+end
+
+local function onetime_run(event)
+	--version check
+
+	--startup settings check
+	if event.mod_startup_settings_changed then
+		debug_log("In noControlBack status!", {r=1,g=0.3,b=0,a=1})
+		--read last EXACTING_MODE status
+		local last_EXACTING_MODE
+		if global and global.EXACTING_MODE then last_EXACTING_MODE = global.EXACTING_MODE end
+		--
+		debug_log("EXACTING_MODE: " .. tostring(last_EXACTING_MODE) .. " --> " .. tostring(EXACTING_MODE), {r=0.8,g=0.4,b=0.6,a=1})
+		if not EXACTING_MODE and (not EXACTING_MODE ~= not last_EXACTING_MODE) then
+			local surfaces = game.surfaces
+			for i=1, #surfaces do
+				local reactors = surfaces[i].find_entities_filtered{name="nuclear-reactor"}
+				for i=1, #reactors do
+					local reactor = reactors[i]
+					reactor.minable = true
+				end
+			end
+			debug_log("All reactors mining limit have been unlocked!")
+			global={}
+		end
 	end
 end
 
@@ -485,7 +539,7 @@ local function on_tick(event)
 			end
 			local reactor = data.reactor
 
-			if reactor.valid then
+			if reactor.valid and reactor.name == "nuclear-reactor" then
 				--reactor glows control
 				if MULTICOLOR_REACTOR then mask_status_control(data) end
 				--reactor status control
@@ -534,11 +588,11 @@ if EXACTING_MODE or MULTICOLOR_REACTOR then
 
 --setup event handler
 script.on_init(setup_global)
-script.on_configuration_changed(setup_global)
+script.on_configuration_changed(configuration_changed)
 script.on_event(e.on_runtime_mod_setting_changed, load_settings)
 
 --main
-script.on_event(defines.events.on_tick, on_tick)
+script.on_event(e.on_tick, on_tick)
 
 --all game build/remove events handler
 script.on_event(built_events, built)

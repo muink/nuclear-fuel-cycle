@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.3
+Date: 06. 03. 2019
+  Changes:
+    - Merge version update '0.1.6'
+---------------------------------------------------------------------------------------------------
 Version: 1.0.2
 Date: 28. 02. 2019
   Fixes:
@@ -19,6 +24,17 @@ Date: 28. 02. 2019
     - Change the science pack ingredients of Fast breeder reactor to 650
     - Remove High tech science pack from ingredients of Fast breeder reactor technology
     - Revision number 0.2.0 --> 1.0.0
+---------------------------------------------------------------------------------------------------
+Version: 0.1.6
+Date: 06. 03. 2019
+  Changes:
+    - Add Readme.md
+  Data:
+    - Adjust notification text (Migration script)
+  Control:
+    - Adjust notification text
+    - on_configuration_changed process refinement
+    - Function optimization and fixed
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.5
 Date: 28. 02. 2019
