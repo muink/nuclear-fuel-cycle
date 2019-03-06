@@ -7,6 +7,7 @@ table.insert(
 
 --Nuclear fuel reprocessing technology
 data.raw["technology"]["nuclear-fuel-reprocessing"].localised_name = {"technology-name.nuclear-fuel-reprocessing"}
+data.raw["technology"]["nuclear-fuel-reprocessing"].unit.count = 150
 table.insert(
 	data.raw["technology"]["nuclear-fuel-reprocessing"].effects,
 	{type = "unlock-recipe", recipe = "plutonium-purification-process"}
@@ -37,7 +38,7 @@ data.raw["technology"]["kovarex-enrichment-process"].localised_name = {"technolo
 
 
 --Atomic bomb
-data.raw["technology"]["atomic-bomb"].prerequisites = {"nuclear-power"}
+data.raw["technology"]["atomic-bomb"].prerequisites = {"uranium-processing"}
 
 
 data:extend({

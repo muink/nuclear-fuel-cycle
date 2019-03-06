@@ -34,7 +34,7 @@ data:extend({
 		enabled = false,
 		energy_required = energy,
 		ingredients = {
-			{"processing-unit", 20},
+			{"rocket-control-unit", 10},
 			{"explosives", 10},
 			{"90%-plutonium-239", atomic_bomb_ingredient}
 		},

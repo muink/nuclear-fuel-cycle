@@ -3,7 +3,7 @@
 MULTICOLOR_REACTOR = settings.startup["nuclear-fuel-cycle_multicolor-reactor"].value
 
 --breeder fuel cell item
-BREEDER_FUEL_VALUE = "3.5GJ"
+BREEDER_FUEL_VALUE = "4.2GJ"
 
 --breeder fuel cell recipe
 U_BREEDING_RATIO = 3*2
