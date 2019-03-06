@@ -184,7 +184,7 @@ local function mask_status_control(data)
 				local mx, my = mask.position.x, mask.position.y
 
 				--sync position
-				if not (mx == rx) or not (my == ry) then mask.teleport(reactor.position) end
+				if mx ~= rx or my ~= ry then mask.teleport(reactor.position) end
 				--Refueling "fake-fuel-cell"
 			else
 			--fuel is changed
@@ -220,7 +220,7 @@ local function mask_status_control(data)
 			end
 		else
 		--if not exist then delete record
-			if not (mask_off_time == "off") then
+			if mask_off_time ~= "off" then
 				data.mask_off_time = "off"
 				data.mask = {}
 			end
@@ -434,6 +434,7 @@ end
 local function configuration_changed(event)
 	local mod_changes = event.mod_changes
 	local startup_changed = event.mod_startup_settings_changed
+	local _modchanged
 
 	--version check
 	if table_length(mod_changes) > 0 then
@@ -451,20 +452,27 @@ local function configuration_changed(event)
 				setup_global(true)
 			end
 			setting_changed_notification(game)
+			_modchanged = true
 		end
+		--not is nuclear-fuel-cycle
+	end
 	--startup settings check
-	elseif startup_changed then
+	if not _modchanged and startup_changed then
 		setting_changed_notification(game)
 		--
 		if table_length(global) > 0 then
 			local reactors = global.reactors
+			local last_EXACTING_MODE = global.EXACTING_MODE
 
 			--EXACTING_MODE on --> off
-			for _, data in pairs(reactors) do
-				data.last_burned = false
-				data.last_fuel_value = false
-				data.reactor.minable = true
+			if not EXACTING_MODE and (not EXACTING_MODE ~= not last_EXACTING_MODE) then
+				for _, data in pairs(reactors) do
+					data.last_burned = false
+					data.last_fuel_value = false
+					data.reactor.minable = true
+				end
 			end
+
 			--MULTICOLOR_REACTOR on --> off
 			--remove all mask and mask records
 
