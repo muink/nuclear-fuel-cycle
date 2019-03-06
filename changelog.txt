@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.6
+Date: 06. 03. 2019
+  Changes:
+    - Add Readme.md
+  Data:
+    - Adjust notification text (Migration script)
+  Control:
+    - Adjust notification text
+    - on_configuration_changed process refinement
+    - Function optimization and fixed
+---------------------------------------------------------------------------------------------------
 Version: 0.1.5
 Date: 28. 02. 2019
   Changes:
