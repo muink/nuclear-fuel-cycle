@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.4
+Date: 07. 03. 2019
+  Balancing:
+    - Change Breeder fuel cell (Pu) fuel value to 4.2GJ
+    - Change the front-end technology of the Atomic bomb to "Uranium processing"
+    - Change the tech point require of Nuclear fuel reprocessing + to 150
+    - Change the craft time of Plutonium purification process to 170
+    - Change the craft time of Used up nuclear fuel (MOX) reprocessing to 35
+    - Change the craft time of Breeder fuel (Pu) nuclide extraction to 90
+---------------------------------------------------------------------------------------------------
 Version: 1.0.3
 Date: 06. 03. 2019
   Changes:
