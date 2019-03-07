@@ -34,7 +34,7 @@ data:extend({
 	{
 		type = "recipe",
 		name = "plutonium-purification-process",
-		energy_required = 150,
+		energy_required = 20*8.5,
 		enabled = false,
 		category = "centrifuging",
 		ingredients = {{"65%-plutonium-239", 20}},
@@ -50,7 +50,7 @@ data:extend({
 	{
 		type = "recipe",
 		name = "mox-fuel-reprocessing",
-		energy_required = 30,
+		energy_required = 5*7,
 		enabled = false,
 		category = "centrifuging",
 		ingredients = {{"used-up-mox-fuel-cell", 5}},
@@ -65,7 +65,7 @@ data:extend({
 	{
 		type = "recipe",
 		name = "breeder-fuel-reprocessing",
-		energy_required = 80,
+		energy_required = 10*9,
 		enabled = false,
 		category = "centrifuging",
 		ingredients = {{"used-up-breeder-fuel-cell", breeder_fuel_reprocessing_ingredient}},
