@@ -3,13 +3,6 @@ reactor_origin_copy = table.deepcopy(data.raw.reactor["nuclear-reactor"])
 
 
 --vanilla reactor
-data.raw.reactor["nuclear-reactor"].working_light_picture = {
-	filename = "__nuclear-fuel-cycle__/graphics/black32.png",
-	width = 32,
-	height = 32,
-	blend_mode = "additive"
-}
-data.raw.reactor["nuclear-reactor"].light.color = {}
 data.raw.reactor["nuclear-reactor"].working_sound = {
 	sound = {filename = "__base__/sound/idle1.ogg", volume = 0.6},
 	apparent_volume = 1.5

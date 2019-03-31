@@ -9,6 +9,7 @@
 	"dependencies": [
 		"base >= 0.17.0",
 		"? RealisticReactorGlow",
+		"? PickerTweaks",
 		"? MushroomCloud",
 		"? AtomicArtillery"
 	]
