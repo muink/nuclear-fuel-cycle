@@ -21,7 +21,7 @@ table.insert(
 table.insert(
 	data.raw.recipe["nuclear-fuel-reprocessing"].results,
 	1,
-	{name = "65%-plutonium-239", probability = 0.2, amount = 1}
+	{name = "RG-plutonium-239", probability = 0.2, amount = 1}
 )
 data.raw.recipe["nuclear-fuel-reprocessing"].icon = "__nuclear-fuel-cycle__/graphics/icons/nuclear-fuel-reprocessing.png"
 data.raw.recipe["nuclear-fuel-reprocessing"].subgroup = "nuclear-reprocessing"
@@ -37,13 +37,13 @@ data:extend({
 		energy_required = 20*8.5,
 		enabled = false,
 		category = "centrifuging",
-		ingredients = {{"65%-plutonium-239", 20}},
+		ingredients = {{"RG-plutonium-239", 20}},
 		icon = "__nuclear-fuel-cycle__/graphics/icons/plutonium-purification-process.png",
 		icon_size = 32,
 		subgroup = "nuclear-reprocessing",
 		order = "b[nuclide-process]-a[plutonium-purification-process]",
 		main_product = "",
-		result = "90%-plutonium-239",
+		result = "plutonium-239",
 		result_count = 13,
 		allow_decomposition = false
 	},
@@ -76,7 +76,7 @@ data:extend({
 		main_product = "",
 		results = {
 			{
-				name = "90%-plutonium-239",
+				name = "plutonium-239",
 				amount = breeder_fuel_reprocessing_ingredient*pu_amount
 			}
 		},

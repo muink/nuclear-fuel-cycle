@@ -7,7 +7,7 @@ local pu_amount = PER_CELL_PU_AMOUNT
 data:extend({
 	{
 		type = "recipe",
-		name = "mox-fuel-cell-from-WGPu-239",
+		name = "mox-fuel-cell-from-Pu-239",
 		icons = {
 			{
 				icon = "__nuclear-fuel-cycle__/graphics/icons/mox-fuel-cell.png",
@@ -23,7 +23,7 @@ data:extend({
 		enabled = false,
 		ingredients = {
 			{"iron-plate", 10},
-			{"90%-plutonium-239", 1},
+			{"plutonium-239", 1},
 			{"uranium-238", 12}
 		},
 		result = "mox-fuel-cell",
@@ -47,7 +47,7 @@ data:extend({
 		enabled = false,
 		ingredients = {
 			{"iron-plate", 10},
-			{"65%-plutonium-239", 1},
+			{"RG-plutonium-239", 1},
 			{"uranium-238", 17}
 		},
 		result = "mox-fuel-cell",
@@ -79,7 +79,7 @@ data:extend({
 	},
 	{
 		type = "recipe",
-		name = "breeder-fuel-cell-from-WGPu-239",
+		name = "breeder-fuel-cell-from-Pu-239",
 		icons = {
 			{
 				icon = "__nuclear-fuel-cycle__/graphics/icons/breeder-fuel-cell.png",
@@ -95,7 +95,7 @@ data:extend({
 		enabled = false,
 		ingredients = {
 			{"iron-plate", pu_breeding_ratio},
-			{"90%-plutonium-239", 1},
+			{"plutonium-239", 1},
 			{"uranium-238", pu_breeding_ratio*pu_amount}
 		},
 		result = "breeder-fuel-cell",

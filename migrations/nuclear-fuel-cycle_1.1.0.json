@@ -1,0 +1,14 @@
+{
+  "item":
+  [
+    [ "90%-plutonium-239", "plutonium-239" ],
+    [ "65%-plutonium-239", "RG-plutonium-239" ]
+  ],
+  "recipe":
+  [
+    [ "atomic-bomb-from-WGPu-239", "atomic-bomb-from-Pu-239" ],
+    [ "nuclear-fuel-from-WGPu-239", "nuclear-fuel-from-Pu-239" ],
+    [ "mox-fuel-cell-from-WGPu-239", "mox-fuel-cell-from-Pu-239" ],
+    [ "breeder-fuel-cell-from-WGPu-239", "breeder-fuel-cell-from-Pu-239" ]
+  ]
+}
