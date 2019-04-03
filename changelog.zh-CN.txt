@@ -1,4 +1,19 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.0
+Date: 03. 04. 2019
+  Balancing:
+    - 调整 MOX燃料棒配方中的U-238 + 1
+  Migrations:
+    - 物品 "90%-plutonium-239" --> "plutonium-239"
+    - 物品 "65%-plutonium-239" --> "RG-plutonium-239"
+    - 配方 "atomic-bomb-from-WGPu-239" --> "atomic-bomb-from-Pu-239"
+    - 配方 "nuclear-fuel-from-WGPu-239" --> "nuclear-fuel-from-Pu-239"
+    - 配方 "mox-fuel-cell-from-WGPu-239" --> "mox-fuel-cell-from-Pu-239"
+    - 配方 "breeder-fuel-cell-from-WGPu-239" --> "breeder-fuel-cell-from-Pu-239"
+  Changes:
+    - 添加 PickerTweaks's Realistic Reactor Glow 兼容性
+    - 修复 light_flicker 问题
+---------------------------------------------------------------------------------------------------
 Version: 1.0.4
 Date: 07. 03. 2019
   Balancing:
