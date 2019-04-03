@@ -24,7 +24,7 @@ data:extend({
 		ingredients = {
 			{"iron-plate", 10},
 			{"plutonium-239", 1},
-			{"uranium-238", 12}
+			{"uranium-238", 13}
 		},
 		result = "mox-fuel-cell",
 		result_count = 10
@@ -48,7 +48,7 @@ data:extend({
 		ingredients = {
 			{"iron-plate", 10},
 			{"RG-plutonium-239", 1},
-			{"uranium-238", 17}
+			{"uranium-238", 18}
 		},
 		result = "mox-fuel-cell",
 		result_count = 10
