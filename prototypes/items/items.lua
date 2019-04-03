@@ -22,7 +22,7 @@ data.raw.item["used-up-uranium-fuel-cell"].localised_name = {"item-name.used-up-
 data:extend({
 	{
 		type = "item",
-		name = "90%-plutonium-239",
+		name = "plutonium-239",
 		icon = "__nuclear-fuel-cycle__/graphics/icons/90%-plutonium-239.png",
 		icon_size = 32,
 		subgroup = "nuclear-product",
@@ -31,7 +31,7 @@ data:extend({
 	},
 	{
 		type = "item",
-		name = "65%-plutonium-239",
+		name = "RG-plutonium-239",
 		icon = "__nuclear-fuel-cycle__/graphics/icons/65%-plutonium-239.png",
 		icon_size = 32,
 		subgroup = "nuclear-product",

@@ -1,4 +1,19 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.0
+Date: 03. 04. 2019
+  Balancing:
+    - Adjust U-238 + 1 in ingredients of MOX fuel cell 
+  Migrations:
+    - item "90%-plutonium-239" --> "plutonium-239"
+    - item "65%-plutonium-239" --> "RG-plutonium-239"
+    - recipe "atomic-bomb-from-WGPu-239" --> "atomic-bomb-from-Pu-239"
+    - recipe "nuclear-fuel-from-WGPu-239" --> "nuclear-fuel-from-Pu-239"
+    - recipe "mox-fuel-cell-from-WGPu-239" --> "mox-fuel-cell-from-Pu-239"
+    - recipe "breeder-fuel-cell-from-WGPu-239" --> "breeder-fuel-cell-from-Pu-239"
+  Changes:
+    - Add PickerTweaks's Realistic Reactor Glow compatibility
+    - Fixed light_flicker problem
+---------------------------------------------------------------------------------------------------
 Version: 1.0.4
 Date: 07. 03. 2019
   Balancing:

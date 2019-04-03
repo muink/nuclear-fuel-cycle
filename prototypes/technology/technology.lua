@@ -1,7 +1,7 @@
 --Atomic bomb technology
 table.insert(
 	data.raw["technology"]["atomic-bomb"].effects,
-	{type = "unlock-recipe", recipe = "atomic-bomb-from-WGPu-239"}
+	{type = "unlock-recipe", recipe = "atomic-bomb-from-Pu-239"}
 )
 
 
@@ -18,7 +18,7 @@ table.insert(
 )
 table.insert(
 	data.raw["technology"]["nuclear-fuel-reprocessing"].effects,
-	{type = "unlock-recipe", recipe = "mox-fuel-cell-from-WGPu-239"}
+	{type = "unlock-recipe", recipe = "mox-fuel-cell-from-Pu-239"}
 )
 table.insert(
 	data.raw["technology"]["nuclear-fuel-reprocessing"].effects,
@@ -29,7 +29,7 @@ table.insert(
 --Kovarex enrichment process
 table.insert(
 	data.raw["technology"]["kovarex-enrichment-process"].effects,
-	{type = "unlock-recipe", recipe = "nuclear-fuel-from-WGPu-239"}
+	{type = "unlock-recipe", recipe = "nuclear-fuel-from-Pu-239"}
 )
 --[[
 data.raw["technology"]["kovarex-enrichment-process"].icon = "__nuclear-fuel-cycle__/graphics/technology/kovarex-enrichment-process.png"
@@ -55,7 +55,7 @@ data:extend({
 			},
 			{
 				type = "unlock-recipe",
-				recipe = "breeder-fuel-cell-from-WGPu-239"
+				recipe = "breeder-fuel-cell-from-Pu-239"
 			},
 			{
 				type = "unlock-recipe",
