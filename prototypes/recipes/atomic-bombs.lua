@@ -19,7 +19,7 @@ data.raw.recipe["atomic-bomb"].icon_size = 32
 data:extend({
 	{
 		type = "recipe",
-		name = "atomic-bomb-from-WGPu-239",
+		name = "atomic-bomb-from-Pu-239",
 		icons = {
 			{
 				icon = "__base__/graphics/icons/atomic-bomb.png",
@@ -36,7 +36,7 @@ data:extend({
 		ingredients = {
 			{"rocket-control-unit", 10},
 			{"explosives", 10},
-			{"90%-plutonium-239", atomic_bomb_ingredient}
+			{"plutonium-239", atomic_bomb_ingredient}
 		},
 		result = "atomic-bomb"
 	}
