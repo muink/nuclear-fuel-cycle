@@ -14,4 +14,5 @@ if MULTICOLOR_REACTOR then
 		blend_mode = "additive"
 	}
 	data.raw.reactor["nuclear-reactor"].light.color = {}
+	data.raw.reactor["nuclear-reactor"].energy_source.light_flicker.color = {}
 end
