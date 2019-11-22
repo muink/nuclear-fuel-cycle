@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.1
+Date: 23. 11. 2019
+  Fixes:
+    - Fixed When reactor was empty and at mask removal waiting period. Putting the same fuel-cell again causes the same mask to be placed repeatedly.
+---------------------------------------------------------------------------------------------------
 Version: 1.1.0
 Date: 03. 04. 2019
   Balancing:
