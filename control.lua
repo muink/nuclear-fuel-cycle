@@ -145,6 +145,7 @@ local function gen_mask(data, color)
 
 	--generate mask
 	debug_log("Mask generated: \"" .. color .. "\"", colors[color].entity_glow.color)
+	if mask.valid and (mask.name == "nuclear-reactor-mask-" .. color) then mask.destroy() end
 	data.mask = reactor.surface.create_entity{name = "nuclear-reactor-mask-" .. color, position = reactor.position, force = reactor.force, fast_replace = true, spill = false}
 	mask = data.mask
 	--mask.minable = false
